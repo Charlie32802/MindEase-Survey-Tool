@@ -330,8 +330,11 @@
       <option value="alpha">Alpha Testing</option>
       <option value="beta">Beta Testing</option>
     </select>
-    <button type="button" onclick="exportAllResults()" class="px-6 py-3 bg-primary text-white rounded-xl font-bold hover:bg-primary/90 active:scale-95 transition-all">
+    <button type="button" onclick="exportAllResults()" class="px-6 py-3 bg-primary text-white rounded-xl font-bold hover:bg-primary/90 active:scale-95 transition-all" title="Export CSV">
       <span class="material-symbols-outlined">download</span>
+    </button>
+    <button type="button" onclick="clearDataPrompt()" class="px-6 py-3 bg-red-500 text-white rounded-xl font-bold hover:bg-red-600 active:scale-95 transition-all" title="Clear Data">
+      <span class="material-symbols-outlined">delete</span>
     </button>
   </div>
   
@@ -340,6 +343,33 @@
       <span class="material-symbols-outlined text-6xl mb-3">bar_chart</span>
       <p>Select a testing mode to view results</p>
     </div>
+  </div>
+</div>
+
+<!-- CONFIRMATION MODAL -->
+<div id="clear-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" style="display: none;">
+  <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 max-w-sm mx-4 shadow-2xl">
+    <div class="flex items-center justify-center w-16 h-16 bg-red-100 dark:bg-red-900/20 rounded-full mx-auto mb-4">
+      <span class="material-symbols-outlined text-red-500 text-4xl">warning</span>
+    </div>
+    <h2 class="text-xl font-bold text-center mb-2">Clear Survey Data?</h2>
+    <p class="text-gray-600 dark:text-gray-400 text-center mb-6">This action cannot be undone. Select what to clear:</p>
+    
+    <div class="space-y-3 mb-6">
+      <button type="button" onclick="clearData('alpha')" class="w-full bg-red-500 hover:bg-red-600 text-white rounded-xl py-3 font-bold active:scale-95 transition-all">
+        Clear Alpha Testing Data
+      </button>
+      <button type="button" onclick="clearData('beta')" class="w-full bg-red-500 hover:bg-red-600 text-white rounded-xl py-3 font-bold active:scale-95 transition-all">
+        Clear Beta Testing Data
+      </button>
+      <button type="button" onclick="clearData('all')" class="w-full bg-red-600 hover:bg-red-700 text-white rounded-xl py-3 font-bold active:scale-95 transition-all">
+        Clear ALL Data
+      </button>
+    </div>
+    
+    <button type="button" onclick="closeClearModal()" class="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-xl py-3 font-bold hover:bg-gray-300 dark:hover:bg-gray-600 active:scale-95 transition-all">
+      Cancel
+    </button>
   </div>
 </div>
 
@@ -590,13 +620,100 @@ function updateResultsView() {
   }
   
   const modeData = surveyData[mode];
+  
+  // Calculate overall statistics
+  const overallStats = calculateOverallStatistics(modeResponses, modeData);
+  
   container.innerHTML = `
     <div class="bg-primary/10 border-2 border-primary rounded-2xl p-5 mb-4">
       <h3 class="text-xl font-bold">${modeData.title}</h3>
       <p class="text-primary font-bold text-2xl mt-1">${modeResponses.length} Total Responses</p>
     </div>
+    
+    <!-- Overall Summary Statistics -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 border-2 border-gray-200 dark:border-gray-700 mb-4">
+      <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary">analytics</span>
+        Overall Statistics Summary
+      </h3>
+      <div class="grid grid-cols-3 gap-4 mb-4">
+        <div class="text-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+          <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Grand Mean</p>
+          <p class="text-3xl font-bold text-primary">${overallStats.grandMean}</p>
+        </div>
+        <div class="text-center p-3 bg-green-50 dark:bg-green-900/20 rounded-xl">
+          <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Std. Dev.</p>
+          <p class="text-3xl font-bold text-green-600">${overallStats.grandStdDev}</p>
+        </div>
+        <div class="text-center p-3 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
+          <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Items</p>
+          <p class="text-3xl font-bold text-purple-600">${overallStats.totalItems}</p>
+        </div>
+      </div>
+      
+      <!-- Metric Averages Table -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-50 dark:bg-gray-700">
+            <tr>
+              <th class="text-left p-3 font-bold">Metric</th>
+              <th class="text-center p-3 font-bold">Mean</th>
+              <th class="text-center p-3 font-bold">Std. Dev.</th>
+              <th class="text-center p-3 font-bold">Interpretation</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+            ${Object.keys(modeData.metrics).map(metricKey => {
+              const metric = modeData.metrics[metricKey];
+              const stats = overallStats.metricStats[metricKey];
+              const interpretation = interpretScore(stats.mean);
+              return `
+                <tr>
+                  <td class="p-3 font-medium">${metric.name}</td>
+                  <td class="text-center p-3 font-bold text-primary">${stats.mean}</td>
+                  <td class="text-center p-3">${stats.stdDev}</td>
+                  <td class="text-center p-3">
+                    <span class="px-3 py-1 rounded-full text-xs font-bold ${interpretation.color}">
+                      ${interpretation.label}
+                    </span>
+                  </td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <!-- Score Distribution Overview -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 border-2 border-gray-200 dark:border-gray-700 mb-4">
+      <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary">pie_chart</span>
+        Overall Score Distribution
+      </h3>
+      <div class="space-y-3">
+        ${[5,4,3,2,1].map(score => {
+          const count = overallStats.scoreDistribution[score];
+          const percentage = ((count / overallStats.totalResponses) * 100).toFixed(1);
+          const colors = {5: 'bg-green-500', 4: 'bg-blue-500', 3: 'bg-gray-500', 2: 'bg-orange-500', 1: 'bg-red-500'};
+          const labels = {5: 'Strongly Agree', 4: 'Agree', 3: 'Neutral', 2: 'Disagree', 1: 'Strongly Disagree'};
+          return `
+            <div class="flex items-center gap-3">
+              <div class="w-32 text-sm font-medium">${labels[score]}</div>
+              <div class="flex-1 h-8 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                <div class="${colors[score]} h-full flex items-center justify-end pr-3 text-white text-sm font-bold" style="width: ${percentage}%">
+                  ${percentage}%
+                </div>
+              </div>
+              <div class="w-16 text-right text-sm font-bold">${count}</div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
   `;
   
+  // Add detailed metric breakdowns
   Object.keys(modeData.metrics).forEach(metricKey => {
     const metric = modeData.metrics[metricKey];
     const card = document.createElement('div');
@@ -609,37 +726,67 @@ function updateResultsView() {
     
     metric.items.forEach((item, itemIdx) => {
       const scores = {1:0, 2:0, 3:0, 4:0, 5:0};
-      let total = 0, sum = 0;
+      let total = 0, sum = 0, sumSquares = 0;
       
       modeResponses.forEach(resp => {
         if (resp.responses[metricKey] && resp.responses[metricKey][itemIdx] !== undefined) {
           const score = resp.responses[metricKey][itemIdx];
           scores[score]++;
           sum += score;
+          sumSquares += score * score;
           total++;
         }
       });
       
-      const avg = total > 0 ? (sum / total).toFixed(1) : '0.0';
+      const mean = total > 0 ? (sum / total) : 0;
+      const variance = total > 0 ? (sumSquares / total) - (mean * mean) : 0;
+      const stdDev = total > 0 ? Math.sqrt(variance).toFixed(2) : '0.00';
+      const meanDisplay = mean.toFixed(2);
+      
+      // Calculate percentage distribution
+      const percentages = {};
+      [1,2,3,4,5].forEach(s => {
+        percentages[s] = total > 0 ? ((scores[s] / total) * 100).toFixed(1) : '0.0';
+      });
       
       html += `
         <div class="mb-4 pb-4 ${itemIdx < metric.items.length - 1 ? 'border-b border-gray-200 dark:border-gray-700' : ''}">
-          <p class="font-medium text-sm mb-2">${itemIdx + 1}. ${item}</p>
-          <div class="flex items-center gap-2 mb-2">
+          <p class="font-medium text-sm mb-3">${itemIdx + 1}. ${item}</p>
+          
+          <div class="flex items-center gap-2 mb-3">
             <div class="flex-1 flex gap-1 h-8">
               ${[1,2,3,4,5].map(s => {
-                const pct = total > 0 ? (scores[s] / total) * 100 : 0;
+                const pct = parseFloat(percentages[s]);
                 const colors = ['bg-red-400', 'bg-orange-400', 'bg-gray-400', 'bg-blue-400', 'bg-green-400'];
-                return `<div class="${colors[s-1]}" style="width: ${pct}%" title="Score ${s}: ${scores[s]} (${pct.toFixed(0)}%)"></div>`;
+                return `<div class="${colors[s-1]}" style="width: ${pct}%" title="Score ${s}: ${scores[s]} (${pct}%)"></div>`;
               }).join('')}
             </div>
-            <div class="text-right min-w-16">
-              <p class="text-2xl font-bold text-primary">${avg}</p>
+            <div class="text-right min-w-20">
+              <p class="text-2xl font-bold text-primary">${meanDisplay}</p>
               <p class="text-xs text-gray-500">${total} resp.</p>
             </div>
           </div>
-          <div class="flex gap-2 text-xs">
-            ${[1,2,3,4,5].map(s => `<span class="flex-1 text-center">${s}:${scores[s]}</span>`).join('')}
+          
+          <div class="grid grid-cols-2 gap-2 text-xs mb-2">
+            <div class="bg-blue-50 dark:bg-blue-900/20 p-2 rounded">
+              <span class="text-gray-600 dark:text-gray-400">Mean:</span>
+              <span class="font-bold ml-1">${meanDisplay}</span>
+            </div>
+            <div class="bg-purple-50 dark:bg-purple-900/20 p-2 rounded">
+              <span class="text-gray-600 dark:text-gray-400">Std Dev:</span>
+              <span class="font-bold ml-1">${stdDev}</span>
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-5 gap-1 text-xs">
+            ${[1,2,3,4,5].map(s => {
+              return `
+                <div class="text-center p-2 bg-gray-50 dark:bg-gray-700 rounded">
+                  <div class="font-bold">${s}</div>
+                  <div class="text-gray-600 dark:text-gray-400">${scores[s]} (${percentages[s]}%)</div>
+                </div>
+              `;
+            }).join('')}
           </div>
         </div>
       `;
@@ -648,6 +795,100 @@ function updateResultsView() {
     card.innerHTML = html;
     container.appendChild(card);
   });
+}
+
+function calculateOverallStatistics(responses, modeData) {
+  const metricStats = {};
+  let grandSum = 0;
+  let grandCount = 0;
+  let grandSumSquares = 0;
+  const scoreDistribution = {1:0, 2:0, 3:0, 4:0, 5:0};
+  
+  Object.keys(modeData.metrics).forEach(metricKey => {
+    const metric = modeData.metrics[metricKey];
+    let metricSum = 0;
+    let metricCount = 0;
+    let metricSumSquares = 0;
+    
+    metric.items.forEach((item, itemIdx) => {
+      responses.forEach(resp => {
+        if (resp.responses[metricKey] && resp.responses[metricKey][itemIdx] !== undefined) {
+          const score = resp.responses[metricKey][itemIdx];
+          metricSum += score;
+          metricSumSquares += score * score;
+          metricCount++;
+          grandSum += score;
+          grandSumSquares += score * score;
+          grandCount++;
+          scoreDistribution[score]++;
+        }
+      });
+    });
+    
+    const mean = metricCount > 0 ? metricSum / metricCount : 0;
+    const variance = metricCount > 0 ? (metricSumSquares / metricCount) - (mean * mean) : 0;
+    const stdDev = Math.sqrt(variance);
+    
+    metricStats[metricKey] = {
+      mean: mean.toFixed(2),
+      stdDev: stdDev.toFixed(2)
+    };
+  });
+  
+  const grandMean = grandCount > 0 ? grandSum / grandCount : 0;
+  const grandVariance = grandCount > 0 ? (grandSumSquares / grandCount) - (grandMean * grandMean) : 0;
+  const grandStdDev = Math.sqrt(grandVariance);
+  
+  return {
+    grandMean: grandMean.toFixed(2),
+    grandStdDev: grandStdDev.toFixed(2),
+    totalItems: Object.keys(modeData.metrics).length * 5,
+    totalResponses: grandCount,
+    metricStats,
+    scoreDistribution
+  };
+}
+
+function interpretScore(meanStr) {
+  const mean = parseFloat(meanStr);
+  if (mean >= 4.5) return { label: 'Excellent', color: 'bg-green-500 text-white' };
+  if (mean >= 3.5) return { label: 'Good', color: 'bg-blue-500 text-white' };
+  if (mean >= 2.5) return { label: 'Fair', color: 'bg-yellow-500 text-white' };
+  if (mean >= 1.5) return { label: 'Poor', color: 'bg-orange-500 text-white' };
+  return { label: 'Very Poor', color: 'bg-red-500 text-white' };
+}
+
+function clearDataPrompt() {
+  document.getElementById('clear-modal').style.display = 'flex';
+}
+
+function closeClearModal() {
+  document.getElementById('clear-modal').style.display = 'none';
+}
+
+function clearData(type) {
+  const confirmMsg = type === 'all' 
+    ? 'Are you absolutely sure? This will delete ALL survey responses.'
+    : `Are you sure you want to delete all ${type.toUpperCase()} testing responses?`;
+    
+  if (!confirm(confirmMsg)) {
+    return;
+  }
+  
+  if (type === 'all') {
+    allResponses = [];
+  } else {
+    allResponses = allResponses.filter(r => r.mode !== type);
+  }
+  
+  localStorage.setItem('mindease-responses', JSON.stringify(allResponses));
+  closeClearModal();
+  updateResultsView();
+  
+  const mode = document.getElementById('results-mode-select').value;
+  if (mode === type || type === 'all') {
+    alert(`${type === 'all' ? 'All data' : type.toUpperCase() + ' data'} has been cleared successfully.`);
+  }
 }
 
 function exportAllResults() {
