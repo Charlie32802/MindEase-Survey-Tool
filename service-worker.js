@@ -1,8 +1,9 @@
 const CACHE_NAME = 'mindease-v1';
 const urlsToCache = [
-  '/index.html',
-  '/logo.png',
-  '/manifest.json'
+  './',
+  './index.html',
+  './logo.png',
+  './manifest.json'
 ];
 
 self.addEventListener('install', event => {
