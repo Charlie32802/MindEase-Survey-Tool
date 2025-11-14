@@ -10,6 +10,7 @@
   <meta name="theme-color" content="#4169E1" />
   <title>MindEase Testing Portal</title>
   <link rel="icon" type="image/png" href="logo.png">
+  <link rel="manifest" href="./manifest.json">
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
@@ -90,6 +91,16 @@
       min-width: 180px;
       transition: background-color 0.3s ease, border-color 0.3s ease;
     }
+
+    /* Fix for consistent border thickness on focus */
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    select:focus,
+    textarea:focus {
+      --tw-ring-offset-width: 0px;
+      --tw-ring-width: 0px;
+      box-shadow: none !important;
+    }
   </style>
 </head>
 
@@ -158,21 +169,23 @@
         <h1 class="text-lg font-bold ml-3">Data Privacy Consent</h1>
       </div>
 
-      <div class="flex-1 overflow-y-auto min-h-0">
-        <div class="bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-200 dark:border-blue-800 rounded-xl p-3 mb-3 text-sm leading-relaxed">
-          The researchers value the confidentiality of any data you have entrusted to us. We will use your given information for thesis purposes only.
+      <div class="flex-1 flex flex-col justify-center min-h-0">
+        <div
+          class="bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-200 dark:border-blue-800 rounded-xl p-4 mb-4 text-sm leading-relaxed">
+          The researchers value the confidentiality of any data you have entrusted to us. We will use your given
+          information for thesis purposes only.
         </div>
 
-        <div class="space-y-2">
+        <div class="space-y-3">
           <label
-            class="flex items-center p-3 bg-white dark:bg-gray-800 rounded-xl border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:border-primary transition-colors">
+            class="flex items-center p-4 bg-white dark:bg-gray-800 rounded-xl border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:border-primary transition-colors">
             <input type="radio" name="consent" value="agree" class="w-5 h-5 text-primary"
               onchange="document.getElementById('consent-agree-btn').disabled = false">
             <span class="ml-3 text-sm font-medium">I Agree</span>
           </label>
 
           <label
-            class="flex items-center p-3 bg-white dark:bg-gray-800 rounded-xl border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:border-red-400 transition-colors">
+            class="flex items-center p-4 bg-white dark:bg-gray-800 rounded-xl border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:border-red-400 transition-colors">
             <input type="radio" name="consent" value="disagree" class="w-5 h-5 text-red-500"
               onchange="document.getElementById('consent-agree-btn').disabled = true">
             <span class="ml-3 text-sm font-medium">I Disagree</span>
@@ -181,7 +194,7 @@
       </div>
 
       <button type="button" id="consent-agree-btn" disabled onclick="goToPersonalInfo()"
-        class="w-full bg-primary text-white rounded-full py-3 font-bold text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90 active:scale-95 transition-all flex-shrink-0 mt-3">
+        class="w-full bg-primary text-white rounded-full py-3 font-bold text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90 active:scale-95 transition-all flex-shrink-0 mt-4">
         Continue
       </button>
     </div>
@@ -195,7 +208,7 @@
         <h1 class="text-lg font-bold ml-3">Personal Information</h1>
       </div>
 
-      <div class="flex-1 space-y-3 overflow-y-auto min-h-0 pb-3">
+      <div class="flex-1 flex flex-col justify-center space-y-4 min-h-0">
         <div>
           <label class="block text-xs font-medium mb-1">Name (Optional)</label>
           <input type="text" id="respondent-name"
@@ -265,7 +278,7 @@
       </div>
 
       <button type="button" id="start-survey-btn" disabled onclick="goToMetricSelection()"
-        class="w-full bg-primary text-white rounded-full py-3 font-bold text-sm hover:bg-primary/90 active:scale-95 transition-all flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed mt-3">
+        class="w-full bg-primary text-white rounded-full py-3 font-bold text-sm hover:bg-primary/90 active:scale-95 transition-all flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed mt-4">
         Start Survey
       </button>
     </div>
@@ -280,7 +293,7 @@
         <div class="w-10"></div>
       </div>
 
-      <div id="metric-progress" class="mb-3 flex-shrink-0">
+      <div id="metric-progress" class="mb-4 flex-shrink-0">
         <div class="flex justify-between text-xs font-medium mb-2">
           <span>Progress</span>
           <span id="metric-progress-text">0 of 5</span>
@@ -290,7 +303,7 @@
         </div>
       </div>
 
-      <div id="metric-list" class="space-y-2.5 flex-1 overflow-y-auto pb-3">
+      <div id="metric-list" class="space-y-3 flex-1 flex flex-col justify-center min-h-0">
       </div>
     </div>
 
@@ -316,10 +329,10 @@
         </div>
       </div>
 
-      <div class="flex-1 px-5 overflow-y-auto min-h-0 flex flex-col">
-        <p id="scoring-question" class="text-base font-bold leading-tight mb-4"></p>
+      <div class="flex-1 px-5 flex flex-col justify-center min-h-0">
+        <p id="scoring-question" class="text-base font-bold leading-tight mb-6"></p>
 
-        <div class="space-y-2 pb-3">
+        <div class="space-y-3">
           <button type="button" onclick="selectScore(5)" data-score="5"
             class="score-btn w-full p-3 rounded-xl border-3 border-green-400 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 font-bold hover:bg-green-100 dark:hover:bg-green-900/30 transition-all duration-200 flex items-center justify-between">
             <span class="text-xs">Strongly Agree</span>
@@ -348,7 +361,8 @@
         </div>
       </div>
 
-      <div class="bg-background-light dark:bg-background-dark border-t border-gray-200 dark:border-gray-700 p-4 flex-shrink-0">
+      <div
+        class="bg-background-light dark:bg-background-dark border-t border-gray-200 dark:border-gray-700 p-4 flex-shrink-0">
         <div class="flex gap-2 max-w-md mx-auto">
           <button type="button" id="prev-question-btn" onclick="previousQuestion()"
             class="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-xl py-2.5 font-bold hover:bg-gray-300 dark:hover:bg-gray-600 active:scale-95 transition-all flex items-center justify-center gap-2">
@@ -373,18 +387,18 @@
         <h1 class="text-lg font-bold ml-3">Final Step</h1>
       </div>
 
-      <div class="flex-1 overflow-y-auto min-h-0">
-        <label class="block text-sm font-bold mb-1.5">Comments and Recommendations <span
+      <div class="flex-1 flex flex-col justify-center min-h-0">
+        <label class="block text-sm font-bold mb-2">Comments and Recommendations <span
             class="text-red-500">*</span></label>
-        <p class="text-xs text-gray-600 dark:text-gray-400 mb-2">Please share any technical observations, bug reports,
+        <p class="text-xs text-gray-600 dark:text-gray-400 mb-3">Please share any technical observations, bug reports,
           or recommendations for improving the system.</p>
-        <textarea id="comments" rows="7" required
+        <textarea id="comments" rows="10" required
           class="w-full px-3 py-2.5 text-sm rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-primary outline-none transition-colors resize-none"
           placeholder="Enter your comments here..." oninput="validateComments()"></textarea>
       </div>
 
       <button type="button" id="submit-survey-btn" disabled onclick="submitSurvey()"
-        class="w-full bg-green-500 hover:bg-green-600 text-white rounded-full py-3 font-bold text-sm active:scale-95 transition-all mt-3 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0">
+        class="w-full bg-green-500 hover:bg-green-600 text-white rounded-full py-3 font-bold text-sm active:scale-95 transition-all mt-4 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0">
         Submit Survey
       </button>
     </div>
@@ -495,7 +509,7 @@
 
     function loadSessionState() {
       const saved = localStorage.getItem(SESSION_KEY);
-if (saved) {
+      if (saved) {
         try {
           const state = JSON.parse(saved);
           currentSession = state.session;
@@ -503,7 +517,7 @@ if (saved) {
           currentMetric = state.metric;
           currentItemIndex = state.itemIndex;
           currentScreen = state.screen;
-          
+
           // Restore UI state based on saved screen
           if (currentScreen !== 'home-tab' && currentScreen !== 'results-tab') {
             if (currentMode === 'alpha') {
@@ -515,7 +529,7 @@ if (saved) {
               document.getElementById('alpha-email-field').style.display = 'none';
               document.getElementById('beta-fields').style.display = 'block';
             }
-            
+
             // Restore form values
             if (currentSession.personalInfo) {
               if (currentSession.personalInfo.name) {
@@ -540,7 +554,7 @@ if (saved) {
                 }
               }
             }
-            
+
             // Restore consent
             if (currentSession.consent) {
               const consentRadio = document.querySelector(`input[name="consent"][value="${currentSession.consent}"]`);
@@ -548,7 +562,7 @@ if (saved) {
               document.getElementById('consent-agree-btn').disabled = currentSession.consent !== 'agree';
             }
           }
-          
+
           return true;
         } catch (e) {
           console.error('Failed to restore session:', e);
@@ -617,6 +631,8 @@ if (saved) {
       const filterSelect = document.getElementById('results-filter-select');
       const mode = modeSelect.value;
 
+      const currentValue = filterSelect.value;
+
       if (!mode) {
         filterSelect.innerHTML = '<option value="all">All Metrics & Comments</option>';
         filterSelect.disabled = true;
@@ -640,6 +656,12 @@ if (saved) {
       html += '<option value="comments">Comments</option>';
 
       filterSelect.innerHTML = html;
+
+      if (currentValue && filterSelect.querySelector(`option[value="${currentValue}"]`)) {
+        filterSelect.value = currentValue;
+      } else {
+        filterSelect.value = 'all';
+      }
     }
 
     function showScreen(id) {
@@ -713,6 +735,11 @@ if (saved) {
     function validateComments() {
       const comments = document.getElementById('comments').value.trim();
       document.getElementById('submit-survey-btn').disabled = comments === '';
+      // Save comments as user types
+      if (currentSession) {
+        currentSession.comments = comments;
+        saveSessionState();
+      }
     }
 
     function goToMetricSelection() {
@@ -794,6 +821,37 @@ if (saved) {
         list.appendChild(btn);
       });
 
+      // Add "Complete Survey" button if all metrics are done but comments aren't
+      const allMetricsComplete = completed === 5;
+      const commentsComplete = currentSession.comments && currentSession.comments.trim() !== '';
+
+      if (allMetricsComplete && !commentsComplete) {
+        const completeBtn = document.createElement('button');
+        completeBtn.type = 'button';
+        completeBtn.className = 'w-full p-3.5 rounded-xl border-2 border-orange-400 bg-orange-50 dark:bg-orange-900/20 transition-all duration-200 active:scale-95 animate-slide-in flex items-center gap-3 mt-4';
+        completeBtn.style.animationDelay = '1s';
+        completeBtn.onclick = () => {
+          document.getElementById('submit-survey-btn').disabled = true;
+          document.getElementById('comments').value = currentSession.comments || '';
+          showScreen('comments-screen');
+          currentScreen = 'comments-screen';
+          saveSessionState();
+        };
+
+        completeBtn.innerHTML = `
+      <div class="w-10 h-10 rounded-full bg-orange-500 text-white flex items-center justify-center flex-shrink-0">
+        <span class="material-symbols-outlined text-xl">edit_note</span>
+      </div>
+      <div class="flex-1 text-left">
+        <h3 class="font-bold text-sm">Complete Survey</h3>
+        <p class="text-xs text-gray-600 dark:text-gray-400">Provide comments and submit</p>
+      </div>
+      <span class="material-symbols-outlined text-xl text-orange-600">arrow_forward_ios</span>
+    `;
+
+        list.appendChild(completeBtn);
+      }
+
       document.getElementById('metric-progress-text').textContent = `${completed} of 5`;
       document.getElementById('metric-progress-bar').style.width = `${(completed / 5) * 100}%`;
     }
@@ -852,9 +910,10 @@ if (saved) {
       const selectedBtn = document.querySelector(`.score-btn[data-score="${score}"]`);
       selectedBtn.classList.add('ring-4', 'ring-primary', 'scale-105');
 
-      currentSession.responses[currentMetric][currentItemIndex] = score;
+      // Store temporarily but don't save to session yet
+      selectedBtn.dataset.tempScore = score;
       document.getElementById('next-question-btn').disabled = false;
-      saveSessionState();
+      // Don't save here anymore
     }
 
     function highlightSelectedScore(score) {
@@ -893,12 +952,18 @@ if (saved) {
     }
 
     function nextQuestion() {
-      const currentAnswer = currentSession.responses[currentMetric][currentItemIndex];
+      // Get the temporarily selected score
+      const selectedBtn = document.querySelector('.score-btn.ring-4.ring-primary');
 
-      if (currentAnswer === undefined) {
+      if (!selectedBtn || !selectedBtn.dataset.tempScore) {
         alert('Please select an answer before proceeding.');
         return;
       }
+
+      // NOW save the score
+      const score = parseInt(selectedBtn.dataset.tempScore);
+      currentSession.responses[currentMetric][currentItemIndex] = score;
+      saveSessionState();
 
       if (currentItemIndex < 4) {
         currentItemIndex++;
@@ -923,7 +988,7 @@ if (saved) {
 
       if (allComplete) {
         document.getElementById('submit-survey-btn').disabled = true;
-        document.getElementById('comments').value = '';
+        document.getElementById('comments').value = currentSession.comments || ''; // Changed from ''
         showScreen('comments-screen');
         currentScreen = 'comments-screen';
         saveSessionState();
@@ -988,74 +1053,85 @@ if (saved) {
       updateResultsView();
     }
 
+    let lastMode = null;
+
     function updateResultsView() {
       const mode = document.getElementById('results-mode-select').value;
       const filterSelect = document.getElementById('results-filter-select');
-      const filterVal = filterSelect.value;
       const container = document.getElementById('results-content');
 
-      buildFilterOptions();
+      // Rebuild filter options only when mode changes
+      if (mode !== lastMode) {
+        buildFilterOptions();
+        lastMode = mode;
+      }
+
+      const filterVal = filterSelect.value;
+
+      // Clear previous content
+      container.innerHTML = '';
 
       if (!mode) {
-        container.innerHTML = '<div class="text-center py-12 text-gray-500"><span class="material-symbols-outlined text-6xl mb-3">bar_chart</span><p>Select a testing mode to view results</p></div>';
+        container.innerHTML = `
+      <div class="text-center py-12 text-gray-500">
+        <span class="material-symbols-outlined text-6xl mb-3">bar_chart</span>
+        <p>Select a testing mode to view results</p>
+      </div>`;
         return;
       }
 
       const modeResponses = allResponses.filter(r => r.mode === mode);
       if (modeResponses.length === 0) {
-        container.innerHTML = '<div class="text-center py-12 text-gray-500"><span class="material-symbols-outlined text-6xl mb-3">inbox</span><p>No responses yet</p></div>';
+        container.innerHTML = `
+      <div class="text-center py-12 text-gray-500">
+        <span class="material-symbols-outlined text-6xl mb-3">inbox</span>
+        <p>No responses yet</p>
+      </div>`;
         return;
       }
 
       const modeData = surveyData[mode];
       const overallStats = calculateOverallStatistics(modeResponses, modeData);
 
-      // Update filter select label
-      const selectedOption = filterSelect.options[filterSelect.selectedIndex];
-      if (selectedOption && filterVal !== 'all') {
-        filterSelect.setAttribute('data-label', selectedOption.text);
-      }
-
-      if (filterVal === 'comments') {
-        container.innerHTML = `
-          <div class="bg-primary/10 border-2 border-primary rounded-xl p-4 mb-4">
-            <h3 class="text-lg font-bold">${modeData.title}</h3>
-            <p class="text-primary font-bold text-xl mt-1">${modeResponses.length} Total Responses</p>
-          </div>
-          
-          <div class="bg-white dark:bg-gray-800 rounded-xl p-4 border-2 border-gray-200 dark:border-gray-700">
-            <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
-              <span class="material-symbols-outlined text-primary">chat</span>
-              User Comments and Recommendations
-            </h3>
-            <div class="space-y-4">
-              ${modeResponses.map((response, index) => {
-          const name = response.personalInfo.name || 'Anonymous';
-          const timestamp = new Date(response.timestamp).toLocaleString();
-          const comments = response.comments || 'No comments provided.';
-
-          return `
-                  <div class="border-l-4 border-primary pl-4 py-2">
-                    <div class="flex justify-between items-start mb-2">
-                      <p class="font-bold text-sm">${name}</p>
-                      <p class="text-xs text-gray-500">${timestamp}</p>
-                    </div>
-                    <p class="text-sm text-gray-700 dark:text-gray-300">${comments}</p>
-                  </div>
-                `;
-        }).join('')}
-            </div>
-          </div>
-        `;
-        return;
-      }
-
-      container.innerHTML = `
+      // === Render Overall Summary ===
+      let html = `
     <div class="bg-primary/10 border-2 border-primary rounded-xl p-4 mb-4">
       <h3 class="text-lg font-bold">${modeData.title}</h3>
       <p class="text-primary font-bold text-xl mt-1">${modeResponses.length} Total Responses</p>
     </div>
-    
+  `;
+
+      if (filterVal === 'comments') {
+        html += `
+      <div class="bg-white dark:bg-gray-800 rounded-xl p-4 border-2 border-gray-200 dark:border-gray-700">
+        <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">chat</span>
+          User Comments and Recommendations
+        </h3>
+        <div class="space-y-4">
+          ${modeResponses.map((response, index) => {
+          const name = response.personalInfo.name || 'Anonymous';
+          const timestamp = new Date(response.timestamp).toLocaleString();
+          const comments = response.comments || 'No comments provided.';
+          return `
+              <div class="border-l-4 border-primary pl-4 py-2">
+                <div class="flex justify-between items-start mb-2">
+                  <p class="font-bold text-sm">${name}</p>
+                  <p class="text-xs text-gray-500">${timestamp}</p>
+                </div>
+                <p class="text-sm text-gray-700 dark:text-gray-300">${comments}</p>
+              </div>
+            `;
+        }).join('')}
+        </div>
+      </div>
+    `;
+        container.innerHTML = html;
+        return;
+      }
+
+      // === Overall Stats ===
+      html += `
     <div class="bg-white dark:bg-gray-800 rounded-xl p-4 border-2 border-gray-200 dark:border-gray-700 mb-4">
       <h3 class="text-lg font-bold mb-3 flex items-center gap-2">
         <span class="material-symbols-outlined text-primary">analytics</span>
@@ -1075,7 +1151,6 @@ if (saved) {
           <p class="text-2xl font-bold text-purple-600">${overallStats.totalItems}</p>
         </div>
       </div>
-      
       <div class="overflow-x-auto">
         <table class="w-full text-xs">
           <thead class="bg-gray-50 dark:bg-gray-700">
@@ -1088,12 +1163,11 @@ if (saved) {
           </thead>
           <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
             ${Object.keys(modeData.metrics).map(metricKey => {
-        const metric = modeData.metrics[metricKey];
         const stats = overallStats.metricStats[metricKey];
         const interpretation = interpretScore(stats.mean);
         return `
                 <tr>
-                  <td class="p-2 font-medium">${metric.name}</td>
+                  <td class="p-2 font-medium">${modeData.metrics[metricKey].name}</td>
                   <td class="text-center p-2 font-bold text-primary">${stats.mean}</td>
                   <td class="text-center p-2">${stats.stdDev}</td>
                   <td class="text-center p-2">
@@ -1108,89 +1182,61 @@ if (saved) {
         </table>
       </div>
     </div>
-    
-    <div class="bg-white dark:bg-gray-800 rounded-xl p-4 border-2 border-gray-200 dark:border-gray-700 mb-4">
-      <h3 class="text-lg font-bold mb-3 flex items-center gap-2">
-        <span class="material-symbols-outlined text-primary">pie_chart</span>
-        Overall Score Distribution
-      </h3>
-      <div class="space-y-2">
-        ${[5, 4, 3, 2, 1].map(score => {
-        const count = overallStats.scoreDistribution[score];
-        const percentage = ((count / overallStats.totalResponses) * 100).toFixed(1);
-        const colors = { 5: 'bg-green-500', 4: 'bg-blue-500', 3: 'bg-amber-500', 2: 'bg-orange-500', 1: 'bg-red-500' };
-        const labels = { 5: 'Strongly Agree', 4: 'Agree', 3: 'Neutral', 2: 'Disagree', 1: 'Strongly Disagree' };
-        return `
-            <div class="flex items-center gap-2">
-              <div class="w-28 text-xs font-medium">${labels[score]}</div>
-              <div class="flex-1 h-6 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden relative">
-                <div class="${colors[score]} h-full transition-all duration-300" style="width: ${percentage}%"></div>
-                <div class="absolute inset-0 flex items-center justify-start pl-2 text-xs font-bold text-gray-900 dark:text-gray-100">
-                  ${percentage}%
-                </div>
-              </div>
-              <div class="w-12 text-right text-xs font-bold">${count}</div>
-            </div>
-          `;
-      }).join('')}
-      </div>
-    </div>
   `;
 
-      if (filterVal === 'all' || Object.keys(modeData.metrics).includes(filterVal)) {
-        Object.keys(modeData.metrics).forEach((metricKey) => {
-          if (filterVal !== 'all' && filterVal !== metricKey) return;
+      container.innerHTML = html;
 
-          const metric = modeData.metrics[metricKey];
-          const card = document.createElement('div');
-          card.className = 'bg-white dark:bg-gray-800 rounded-xl p-4 border-2 border-gray-200 dark:border-gray-700 mb-4';
+      // === Render Individual Metrics ===
+      Object.keys(modeData.metrics).forEach(metricKey => {
+        if (filterVal !== 'all' && filterVal !== metricKey) return;
 
-          let html = `<h3 class="text-lg font-bold mb-3 flex items-center gap-2">
+        const metric = modeData.metrics[metricKey];
+        const card = document.createElement('div');
+        card.className = 'bg-white dark:bg-gray-800 rounded-xl p-4 border-2 border-gray-200 dark:border-gray-700 mb-4';
+
+        let metricHtml = `<h3 class="text-lg font-bold mb-3 flex items-center gap-2">
       <span class="material-symbols-outlined text-primary">${metric.icon}</span>
       ${metric.name}
     </h3>`;
 
-          metric.items.forEach((item, itemIdx) => {
-            const scores = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-            let total = 0, sum = 0, sumSquares = 0;
+        metric.items.forEach((item, itemIdx) => {
+          const scores = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+          let total = 0, sum = 0, sumSquares = 0;
 
-            modeResponses.forEach(resp => {
-              if (resp.responses[metricKey] && resp.responses[metricKey][itemIdx] !== undefined) {
-                const score = resp.responses[metricKey][itemIdx];
-                scores[score]++;
-                sum += score;
-                sumSquares += score * score;
-                total++;
-              }
-            });
+          modeResponses.forEach(resp => {
+            if (resp.responses[metricKey]?.[itemIdx] !== undefined) {
+              const score = resp.responses[metricKey][itemIdx];
+              scores[score]++;
+              sum += score;
+              sumSquares += score * score;
+              total++;
+            }
+          });
 
-            const mean = total > 0 ? (sum / total).toFixed(2) : '0.00';
-            const variance = total > 0 ? (sumSquares / total) - (mean * mean) : 0;
-            const stdDev = total > 0 ? Math.sqrt(variance).toFixed(2) : '0.00';
-            const percentages = {};
-            [1, 2, 3, 4, 5].forEach(s => {
-              percentages[s] = total > 0 ? ((scores[s] / total) * 100).toFixed(1) : '0.0';
-            });
+          const mean = total > 0 ? (sum / total).toFixed(2) : '0.00';
+          const variance = total > 0 ? (sumSquares / total) - (mean * mean) : 0;
+          const stdDev = total > 0 ? Math.sqrt(variance).toFixed(2) : '0.00';
+          const percentages = {};
+          [1, 2, 3, 4, 5].forEach(s => {
+            percentages[s] = total > 0 ? ((scores[s] / total) * 100).toFixed(1) : '0.0';
+          });
 
-            html += `
-        <div class="mb-3 pb-3 ${itemIdx < metric.items.length - 1 ? 'border-b border-gray-200 dark:border-gray-700' : ''}">
+          metricHtml += `
+        <div class="mb-3 pb-3 ${itemIdx < 4 ? 'border-b border-gray-200 dark:border-gray-700' : ''}">
           <p class="font-medium text-xs mb-2">${itemIdx + 1}. ${item}</p>
-          
           <div class="flex items-center gap-2 mb-2">
             <div class="flex-1 flex gap-1 h-6">
-              ${[1, 2, 3, 4, 5].map(s => {
-              const pct = percentages[s];
-              const colors = ['bg-red-400', 'bg-orange-400', 'bg-amber-400', 'bg-blue-400', 'bg-green-400'];
-              return `<div class="${colors[s - 1]}" style="width: ${pct}%" title="Score ${s}: ${scores[s]} (${pct}%)"></div>`;
-            }).join('')}
+              ${[1, 2, 3, 4, 5].map(s => `
+                <div class="${['bg-red-400', 'bg-orange-400', 'bg-amber-400', 'bg-blue-400', 'bg-green-400'][s - 1]}"
+                     style="width: ${percentages[s]}%" title="Score ${s}: ${scores[s]} (${percentages[s]}%)"></div>
+              `).join('')}
             </div>
             <div class="text-right min-w-16">
               <p class="text-xl font-bold text-primary">${mean}</p>
               <p class="text-xs text-gray-500">${total} resp.</p>
             </div>
           </div>
-          
-          <div class="grid grid-cols-2 gap-2 text-xs mb-2">
+          <div class="grid grid-cols-2 gap-2 text-xs">
             <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-2">
               <p class="text-gray-600 dark:text-gray-400">Std. Dev.</p>
               <p class="font-bold text-primary">${stdDev}</p>
@@ -1202,40 +1248,38 @@ if (saved) {
           </div>
         </div>
       `;
-          });
-
-          card.innerHTML = html;
-          container.appendChild(card);
         });
-      }
 
-      // Display comments at bottom if "All Metrics & Comments" is selected
+        card.innerHTML = metricHtml;
+        container.appendChild(card);
+      });
+
+      // === Add Comments if "All" is selected ===
       if (filterVal === 'all') {
         const commentsCard = document.createElement('div');
         commentsCard.className = 'bg-white dark:bg-gray-800 rounded-xl p-4 border-2 border-gray-200 dark:border-gray-700 mb-4';
         commentsCard.innerHTML = `
-          <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
-            <span class="material-symbols-outlined text-primary">chat</span>
-            User Comments and Recommendations
-          </h3>
-          <div class="space-y-4">
-            ${modeResponses.map((response, index) => {
-          const name = response.personalInfo.name || 'Anonymous';
-          const timestamp = new Date(response.timestamp).toLocaleString();
-          const comments = response.comments || 'No comments provided.';
-
+      <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary">chat</span>
+        User Comments and Recommendations
+      </h3>
+      <div class="space-y-4">
+        ${modeResponses.map(r => {
+          const name = r.personalInfo.name || 'Anonymous';
+          const time = new Date(r.timestamp).toLocaleString();
+          const comment = r.comments || 'No comments.';
           return `
-                <div class="border-l-4 border-primary pl-4 py-2">
-                  <div class="flex justify-between items-start mb-2">
-                    <p class="font-bold text-sm">${name}</p>
-                    <p class="text-xs text-gray-500">${timestamp}</p>
-                  </div>
-                  <p class="text-sm text-gray-700 dark:text-gray-300">${comments}</p>
-                </div>
-              `;
+            <div class="border-l-4 border-primary pl-4 py-2">
+              <div class="flex justify-between items-start mb-2">
+                <p class="font-bold text-sm">${name}</p>
+                <p class="text-xs text-gray-500">${time}</p>
+              </div>
+              <p class="text-sm text-gray-700 dark:text-gray-300">${comment}</p>
+            </div>
+          `;
         }).join('')}
-          </div>
-        `;
+      </div>
+    `;
         container.appendChild(commentsCard);
       }
     }
@@ -1404,7 +1448,7 @@ if (saved) {
       if (stored) {
         allResponses = JSON.parse(stored);
       }
-      
+
       // Try to restore previous session
       const restored = loadSessionState();
       if (restored && currentScreen !== 'home-tab' && currentScreen !== 'results-tab') {
@@ -1416,9 +1460,23 @@ if (saved) {
         }
         showScreen(currentScreen);
       }
+      buildFilterOptions();
     });
   </script>
-
+  <script>
+    // Register service worker for PWA functionality
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('./service-worker.js')
+          .then(function (registration) {
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+          })
+          .catch(function (error) {
+            console.log('ServiceWorker registration failed: ', error);
+          });
+      });
+    }
+  </script>
 </body>
 
 </html>
