@@ -11,6 +11,30 @@
   <title>MindEase Testing Portal</title>
   <link rel="icon" type="image/png" href="logo.png">
   <link rel="manifest" href="./manifest.json">
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+  <script>
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyA5JhjcF6dWo2tCz2cWGw43hKxmPGQw-M4",
+      authDomain: "mindease-survey-tool.firebaseapp.com",
+      projectId: "mindease-survey-tool",
+      storageBucket: "mindease-survey-tool.firebasestorage.app",
+      messagingSenderId: "27120663580",
+      appId: "1:27120663580:web:95b679794f4f2e8422b3d9",
+      measurementId: "G-LZNVL98LD9"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    // Initialize Cloud Firestore
+    const db = firebase.firestore();
+  </script>
+
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
@@ -100,6 +124,26 @@
       --tw-ring-offset-width: 0px;
       --tw-ring-width: 0px;
       box-shadow: none !important;
+    }
+
+    .loading-spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #4169E1;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
     }
   </style>
 </head>
@@ -1007,7 +1051,7 @@
       saveSessionState();
     }
 
-    function submitSurvey() {
+    async function submitSurvey() {
       const comments = document.getElementById('comments').value.trim();
 
       if (!comments) {
@@ -1017,14 +1061,42 @@
 
       currentSession.comments = comments;
 
-      const stored = localStorage.getItem('mindease-responses');
-      allResponses = stored ? JSON.parse(stored) : [];
-      allResponses.push(currentSession);
-      localStorage.setItem('mindease-responses', JSON.stringify(allResponses));
+      // Show loading state
+      const submitBtn = document.getElementById('submit-survey-btn');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<div class="loading-spinner"></div>';
+      submitBtn.disabled = true;
 
-      clearSessionState();
-      showScreen('success-screen');
-      currentScreen = 'success-screen';
+      try {
+        // Save to Firebase first
+        const docRef = await db.collection('survey_responses').add(currentSession);
+
+        // Add Firebase ID to the session for duplicate tracking
+        currentSession.firebaseId = docRef.id;
+
+        // Update local storage - replace existing entry if any
+        const stored = localStorage.getItem('mindease-responses');
+        let allResponses = stored ? JSON.parse(stored) : [];
+
+        // Remove any existing entry with same timestamp/email to prevent duplicates
+        const key = currentSession.timestamp + (currentSession.personalInfo?.email || '');
+        allResponses = allResponses.filter(r =>
+          (r.timestamp + (r.personalInfo?.email || '')) !== key
+        );
+
+        // Add the new response
+        allResponses.push(currentSession);
+        localStorage.setItem('mindease-responses', JSON.stringify(allResponses));
+
+        clearSessionState();
+        showScreen('success-screen');
+        currentScreen = 'success-screen';
+      } catch (error) {
+        console.error('Error saving to Firebase:', error);
+        alert('Failed to submit survey. Please check your internet connection and try again.');
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+      }
     }
 
     function resetSurvey() {
@@ -1047,10 +1119,60 @@
       showHomeTab();
     }
 
-    function loadResults() {
-      const stored = localStorage.getItem('mindease-responses');
-      allResponses = stored ? JSON.parse(stored) : [];
-      updateResultsView();
+    async function loadResults() {
+      const container = document.getElementById('results-content');
+      container.innerHTML = '<div class="text-center py-8"><div class="loading-spinner"></div><p class="mt-4 text-gray-600">Loading results...</p></div>';
+
+      try {
+        // Try to get data from Firebase first
+        const snapshot = await db.collection('survey_responses').get();
+        const firebaseResponses = [];
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          // Add Firebase document ID to prevent duplicates
+          data.firebaseId = doc.id;
+          firebaseResponses.push(data);
+        });
+
+        // Also get local data
+        const stored = localStorage.getItem('mindease-responses');
+        const localResponses = stored ? JSON.parse(stored) : [];
+
+        // Create a Set to track unique responses using timestamp + email as key
+        const uniqueKeys = new Set();
+        const mergedResponses = [];
+
+        // First add Firebase responses (prioritize these)
+        firebaseResponses.forEach(response => {
+          const key = response.timestamp + (response.personalInfo?.email || '');
+          if (!uniqueKeys.has(key)) {
+            uniqueKeys.add(key);
+            mergedResponses.push(response);
+          }
+        });
+
+        // Then add local responses only if they don't exist in Firebase
+        localResponses.forEach(response => {
+          const key = response.timestamp + (response.personalInfo?.email || '');
+          if (!uniqueKeys.has(key)) {
+            uniqueKeys.add(key);
+            mergedResponses.push(response);
+          }
+        });
+
+        allResponses = mergedResponses;
+
+        // Update localStorage with merged data (remove duplicates)
+        localStorage.setItem('mindease-responses', JSON.stringify(allResponses));
+
+        updateResultsView();
+      } catch (error) {
+        console.error('Error loading from Firebase:', error);
+        // Fall back to local storage
+        const stored = localStorage.getItem('mindease-responses');
+        allResponses = stored ? JSON.parse(stored) : [];
+        updateResultsView();
+      }
     }
 
     let lastMode = null;
@@ -1422,9 +1544,22 @@
       document.getElementById('clear-modal').style.display = 'none';
     }
 
-    function clearData(type) {
+    async function clearData(type) {
       if (type === 'all') {
         if (confirm('Are you absolutely sure? This will delete ALL survey data permanently!')) {
+          // Clear Firebase data
+          try {
+            const snapshot = await db.collection('survey_responses').get();
+            const batch = db.batch();
+            snapshot.forEach(doc => {
+              batch.delete(doc.ref);
+            });
+            await batch.commit();
+          } catch (error) {
+            console.error('Error clearing Firebase data:', error);
+          }
+
+          // Clear local data
           localStorage.removeItem('mindease-responses');
           allResponses = [];
           closeClearModal();
@@ -1433,6 +1568,19 @@
         }
       } else {
         if (confirm(`Are you sure you want to clear all ${type === 'alpha' ? 'Alpha' : 'Beta'} Testing data?`)) {
+          // Clear from Firebase
+          try {
+            const snapshot = await db.collection('survey_responses').where('mode', '==', type).get();
+            const batch = db.batch();
+            snapshot.forEach(doc => {
+              batch.delete(doc.ref);
+            });
+            await batch.commit();
+          } catch (error) {
+            console.error('Error clearing Firebase data:', error);
+          }
+
+          // Clear from local storage
           allResponses = allResponses.filter(r => r.mode !== type);
           localStorage.setItem('mindease-responses', JSON.stringify(allResponses));
           closeClearModal();
