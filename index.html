@@ -8,9 +8,6 @@
 <meta name="apple-mobile-web-app-title" content="MindEase"/>
 <meta name="theme-color" content="#4169E1"/>
 <title>MindEase Testing Portal</title>
-<link rel="icon" type="image/png" href="logo.png"/>
-<link rel="apple-touch-icon" href="logo.png"/>
-<link rel="manifest" href="manifest.json"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
@@ -38,17 +35,19 @@
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       min-height: 100vh;
+      overflow-x: hidden;
     }
     .screen { 
       display: none;
       opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.3s ease, transform 0.3s ease;
     }
     .screen.active { 
       display: flex;
       opacity: 1;
-      transform: translateY(0);
+    }
+    .fit-viewport {
+      min-height: calc(100vh - 5rem);
+      max-height: calc(100vh - 5rem);
     }
     @keyframes slideIn {
       from { opacity: 0; transform: translateX(20px); }
@@ -71,11 +70,11 @@
 <!-- Main Navigation Tabs -->
 <nav class="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 z-50 safe-area-inset">
   <div class="flex max-w-md mx-auto">
-    <button onclick="showHomeTab()" id="tab-home" class="tab-button active flex-1 flex flex-col items-center py-3 px-4">
+    <button type="button" onclick="showHomeTab()" id="tab-home" class="tab-button active flex-1 flex flex-col items-center py-3 px-4">
       <span class="material-symbols-outlined text-2xl mb-1">home</span>
       <span class="text-xs font-medium">Home</span>
     </button>
-    <button onclick="showResultsTab()" id="tab-results" class="tab-button flex-1 flex flex-col items-center py-3 px-4 text-gray-600 dark:text-gray-400">
+    <button type="button" onclick="showResultsTab()" id="tab-results" class="tab-button flex-1 flex flex-col items-center py-3 px-4 text-gray-600 dark:text-gray-400">
       <span class="material-symbols-outlined text-2xl mb-1">bar_chart</span>
       <span class="text-xs font-medium">Results</span>
     </button>
@@ -85,8 +84,8 @@
 <div class="pb-20 max-w-md mx-auto">
 
 <!-- HOME TAB - Mode Selection -->
-<div id="home-tab" class="screen active flex-col min-h-screen p-6">
-  <div class="flex-1 flex flex-col items-center justify-center">
+<div id="home-tab" class="screen active flex-col fit-viewport p-6">
+  <div class="flex-1 flex flex-col items-center justify-center max-w-md mx-auto w-full">
     <div class="flex items-center justify-center h-20 w-20 bg-primary/20 rounded-2xl mb-6">
       <span class="material-symbols-outlined text-primary text-5xl">science</span>
     </div>
@@ -94,7 +93,7 @@
     <p class="text-gray-600 dark:text-gray-400 text-center mb-12">Select your testing group</p>
     
     <div class="w-full space-y-4">
-      <button onclick="startSurvey('alpha')" class="group w-full bg-primary hover:bg-primary/90 active:scale-95 text-white rounded-2xl p-6 shadow-lg transition-all duration-200">
+      <button type="button" onclick="startSurvey('alpha')" class="group w-full bg-primary hover:bg-primary/90 active:scale-95 text-white rounded-2xl p-6 shadow-lg transition-all duration-200">
         <div class="flex items-center justify-between">
           <div class="text-left">
             <h3 class="text-xl font-bold mb-1">Alpha Testing</h3>
@@ -104,7 +103,7 @@
         </div>
       </button>
       
-      <button onclick="startSurvey('beta')" class="group w-full bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 active:scale-95 rounded-2xl p-6 shadow-lg border-2 border-gray-200 dark:border-gray-700 transition-all duration-200">
+      <button type="button" onclick="startSurvey('beta')" class="group w-full bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 active:scale-95 rounded-2xl p-6 shadow-lg border-2 border-gray-200 dark:border-gray-700 transition-all duration-200">
         <div class="flex items-center justify-between">
           <div class="text-left">
             <h3 class="text-xl font-bold mb-1">Beta Testing</h3>
@@ -118,47 +117,47 @@
 </div>
 
 <!-- CONSENT SCREEN -->
-<div id="consent-screen" class="screen flex-col min-h-screen p-6">
-  <div class="flex items-center mb-6">
-    <button onclick="goToHome()" class="p-2 -ml-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
+<div id="consent-screen" class="screen flex-col fit-viewport p-6 overflow-y-auto">
+  <div class="flex items-center mb-6 flex-shrink-0">
+    <button type="button" onclick="goToHome()" class="p-2 -ml-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
       <span class="material-symbols-outlined text-3xl">arrow_back</span>
     </button>
     <h1 class="text-2xl font-bold ml-4">Data Privacy Consent</h1>
   </div>
   
-  <div class="flex-1">
+  <div class="flex-1 overflow-y-auto">
     <div class="bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-200 dark:border-blue-800 rounded-2xl p-6 mb-6">
       <p class="text-sm leading-relaxed">The researchers value the confidentiality of any data you have entrusted to us. We will use your given information for thesis purposes only.</p>
     </div>
     
     <div class="space-y-4">
       <label class="flex items-center p-5 bg-white dark:bg-gray-800 rounded-xl border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:border-primary transition-colors">
-        <input type="radio" name="consent" value="agree" class="w-5 h-5 text-primary" onclick="document.getElementById('consent-agree-btn').disabled = false">
+        <input type="radio" name="consent" value="agree" class="w-5 h-5 text-primary" onchange="document.getElementById('consent-agree-btn').disabled = false">
         <span class="ml-4 text-lg font-medium">I Agree</span>
       </label>
       
       <label class="flex items-center p-5 bg-white dark:bg-gray-800 rounded-xl border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:border-red-400 transition-colors">
-        <input type="radio" name="consent" value="disagree" class="w-5 h-5 text-red-500" onclick="document.getElementById('consent-agree-btn').disabled = true">
+        <input type="radio" name="consent" value="disagree" class="w-5 h-5 text-red-500" onchange="document.getElementById('consent-agree-btn').disabled = true">
         <span class="ml-4 text-lg font-medium">I Disagree</span>
       </label>
     </div>
   </div>
   
-  <button id="consent-agree-btn" disabled onclick="goToPersonalInfo()" class="w-full bg-primary text-white rounded-full py-4 font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90 active:scale-95 transition-all">
+  <button type="button" id="consent-agree-btn" disabled onclick="goToPersonalInfo()" class="w-full bg-primary text-white rounded-full py-4 font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90 active:scale-95 transition-all flex-shrink-0 mt-6">
     Continue
   </button>
 </div>
 
 <!-- PERSONAL INFO SCREEN -->
-<div id="personal-info-screen" class="screen flex-col min-h-screen p-6">
-  <div class="flex items-center mb-6">
-    <button onclick="goToConsent()" class="p-2 -ml-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
+<div id="personal-info-screen" class="screen flex-col fit-viewport p-6 overflow-y-auto">
+  <div class="flex items-center mb-6 flex-shrink-0">
+    <button type="button" onclick="goToConsent()" class="p-2 -ml-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
       <span class="material-symbols-outlined text-3xl">arrow_back</span>
     </button>
     <h1 class="text-2xl font-bold ml-4">Personal Information</h1>
   </div>
   
-  <div class="flex-1 space-y-5">
+  <div class="flex-1 space-y-5 overflow-y-auto pb-6">
     <div>
       <label class="block text-sm font-medium mb-2">Name (Optional)</label>
       <input type="text" id="respondent-name" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-primary outline-none transition-colors" placeholder="Enter your name">
@@ -210,7 +209,7 @@
     </div>
   </div>
   
-  <button onclick="goToMetricSelection()" class="w-full bg-primary text-white rounded-full py-4 font-bold text-lg hover:bg-primary/90 active:scale-95 transition-all mt-6">
+  <button type="button" onclick="goToMetricSelection()" class="w-full bg-primary text-white rounded-full py-4 font-bold text-lg hover:bg-primary/90 active:scale-95 transition-all flex-shrink-0">
     Start Survey
   </button>
 </div>
@@ -218,7 +217,7 @@
 <!-- METRIC SELECTION SCREEN -->
 <div id="metric-screen" class="screen flex-col min-h-screen p-6">
   <div class="flex items-center justify-between mb-6">
-    <button onclick="goToPersonalInfo()" class="p-2 -ml-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
+    <button type="button" onclick="goToPersonalInfo()" class="p-2 -ml-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
       <span class="material-symbols-outlined text-3xl">arrow_back</span>
     </button>
     <h1 id="metric-title" class="text-2xl font-bold">Select Metric</h1>
@@ -244,7 +243,7 @@
 <div id="scoring-screen" class="screen flex-col min-h-screen">
   <div class="sticky top-0 bg-background-light dark:bg-background-dark z-10 pb-4">
     <div class="flex items-center justify-between p-6 pb-4">
-      <button onclick="goBackToMetrics()" class="p-2 -ml-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
+      <button type="button" onclick="goBackToMetrics()" class="p-2 -ml-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
         <span class="material-symbols-outlined text-3xl">arrow_back</span>
       </button>
       <h1 id="scoring-metric-name" class="text-lg font-bold">Metric</h1>
@@ -265,23 +264,23 @@
     <p id="scoring-question" class="text-xl font-bold leading-tight mb-8"></p>
     
     <div class="space-y-3 mb-8">
-      <button onclick="selectScore(5)" class="score-btn w-full p-5 rounded-xl border-3 border-green-400 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 font-bold hover:bg-green-100 dark:hover:bg-green-900/30 active:scale-95 transition-all duration-200 flex items-center justify-between">
+      <button type="button" onclick="selectScore(5)" class="score-btn w-full p-5 rounded-xl border-3 border-green-400 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 font-bold hover:bg-green-100 dark:hover:bg-green-900/30 active:scale-95 transition-all duration-200 flex items-center justify-between">
         <span>Strongly Agree</span>
         <span class="text-2xl font-bold">5</span>
       </button>
-      <button onclick="selectScore(4)" class="score-btn w-full p-5 rounded-xl border-3 border-blue-400 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 font-bold hover:bg-blue-100 dark:hover:bg-blue-900/30 active:scale-95 transition-all duration-200 flex items-center justify-between">
+      <button type="button" onclick="selectScore(4)" class="score-btn w-full p-5 rounded-xl border-3 border-blue-400 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 font-bold hover:bg-blue-100 dark:hover:bg-blue-900/30 active:scale-95 transition-all duration-200 flex items-center justify-between">
         <span>Agree</span>
         <span class="text-2xl font-bold">4</span>
       </button>
-      <button onclick="selectScore(3)" class="score-btn w-full p-5 rounded-xl border-3 border-gray-400 bg-gray-50 dark:bg-gray-700/20 text-gray-700 dark:text-gray-400 font-bold hover:bg-gray-100 dark:hover:bg-gray-700/30 active:scale-95 transition-all duration-200 flex items-center justify-between">
+      <button type="button" onclick="selectScore(3)" class="score-btn w-full p-5 rounded-xl border-3 border-gray-400 bg-gray-50 dark:bg-gray-700/20 text-gray-700 dark:text-gray-400 font-bold hover:bg-gray-100 dark:hover:bg-gray-700/30 active:scale-95 transition-all duration-200 flex items-center justify-between">
         <span>Neutral</span>
         <span class="text-2xl font-bold">3</span>
       </button>
-      <button onclick="selectScore(2)" class="score-btn w-full p-5 rounded-xl border-3 border-orange-400 bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400 font-bold hover:bg-orange-100 dark:hover:bg-orange-900/30 active:scale-95 transition-all duration-200 flex items-center justify-between">
+      <button type="button" onclick="selectScore(2)" class="score-btn w-full p-5 rounded-xl border-3 border-orange-400 bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400 font-bold hover:bg-orange-100 dark:hover:bg-orange-900/30 active:scale-95 transition-all duration-200 flex items-center justify-between">
         <span>Disagree</span>
         <span class="text-2xl font-bold">2</span>
       </button>
-      <button onclick="selectScore(1)" class="score-btn w-full p-5 rounded-xl border-3 border-red-400 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 font-bold hover:bg-red-100 dark:hover:bg-red-900/30 active:scale-95 transition-all duration-200 flex items-center justify-between">
+      <button type="button" onclick="selectScore(1)" class="score-btn w-full p-5 rounded-xl border-3 border-red-400 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 font-bold hover:bg-red-100 dark:hover:bg-red-900/30 active:scale-95 transition-all duration-200 flex items-center justify-between">
         <span>Strongly Disagree</span>
         <span class="text-2xl font-bold">1</span>
       </button>
@@ -292,7 +291,7 @@
 <!-- COMMENTS SCREEN -->
 <div id="comments-screen" class="screen flex-col min-h-screen p-6">
   <div class="flex items-center mb-6">
-    <button onclick="goBackToMetrics()" class="p-2 -ml-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
+    <button type="button" onclick="goBackToMetrics()" class="p-2 -ml-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
       <span class="material-symbols-outlined text-3xl">arrow_back</span>
     </button>
     <h1 class="text-2xl font-bold ml-4">Final Step</h1>
@@ -304,7 +303,7 @@
     <textarea id="comments" rows="8" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-primary outline-none transition-colors resize-none" placeholder="Enter your comments here..."></textarea>
   </div>
   
-  <button onclick="submitSurvey()" class="w-full bg-green-500 hover:bg-green-600 text-white rounded-full py-4 font-bold text-lg active:scale-95 transition-all mt-6">
+  <button type="button" onclick="submitSurvey()" class="w-full bg-green-500 hover:bg-green-600 text-white rounded-full py-4 font-bold text-lg active:scale-95 transition-all mt-6">
     Submit Survey
   </button>
 </div>
@@ -316,27 +315,27 @@
   </div>
   <h1 class="text-3xl font-bold mb-3">Thank You!</h1>
   <p class="text-gray-600 dark:text-gray-400 mb-8">Your response has been recorded successfully.</p>
-  <button onclick="resetSurvey()" class="bg-primary text-white rounded-full px-8 py-4 font-bold hover:bg-primary/90 active:scale-95 transition-all">
+  <button type="button" onclick="resetSurvey()" class="bg-primary text-white rounded-full px-8 py-4 font-bold hover:bg-primary/90 active:scale-95 transition-all">
     Submit Another Response
   </button>
 </div>
 
 <!-- RESULTS TAB -->
-<div id="results-tab" class="screen flex-col min-h-screen p-6">
-  <h1 class="text-2xl font-bold mb-6">Survey Results</h1>
+<div id="results-tab" class="screen flex-col fit-viewport p-6 overflow-y-auto">
+  <h1 class="text-2xl font-bold mb-6 flex-shrink-0">Survey Results</h1>
   
-  <div class="mb-4 flex gap-2">
+  <div class="mb-4 flex gap-2 flex-shrink-0">
     <select id="results-mode-select" onchange="updateResultsView()" class="flex-1 px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-primary outline-none">
       <option value="">Select Testing Mode</option>
       <option value="alpha">Alpha Testing</option>
       <option value="beta">Beta Testing</option>
     </select>
-    <button onclick="exportAllResults()" class="px-6 py-3 bg-primary text-white rounded-xl font-bold hover:bg-primary/90 active:scale-95 transition-all">
+    <button type="button" onclick="exportAllResults()" class="px-6 py-3 bg-primary text-white rounded-xl font-bold hover:bg-primary/90 active:scale-95 transition-all">
       <span class="material-symbols-outlined">download</span>
     </button>
   </div>
   
-  <div id="results-content" class="space-y-4">
+  <div id="results-content" class="space-y-4 flex-1 overflow-y-auto">
     <div class="text-center py-12 text-gray-500">
       <span class="material-symbols-outlined text-6xl mb-3">bar_chart</span>
       <p>Select a testing mode to view results</p>
@@ -373,8 +372,15 @@ const surveyData = {
 let currentMode, currentMetric, currentItemIndex, currentSession, allResponses = [];
 
 function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  setTimeout(() => document.getElementById(id).classList.add('active'), 50);
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active');
+    s.style.display = 'none';
+  });
+  setTimeout(() => {
+    const screen = document.getElementById(id);
+    screen.style.display = 'flex';
+    setTimeout(() => screen.classList.add('active'), 10);
+  }, 50);
 }
 
 function showHomeTab() {
@@ -452,6 +458,7 @@ function renderMetricList() {
     if (isComplete) completed++;
     
     const btn = document.createElement('button');
+    btn.type = 'button';
     btn.className = `w-full p-5 rounded-2xl border-2 transition-all duration-200 active:scale-95 animate-slide-in flex items-center gap-4 ${isComplete ? 'bg-green-50 dark:bg-green-900/20 border-green-400' : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-primary'}`;
     btn.style.animationDelay = `${idx * 0.1}s`;
     btn.onclick = () => startMetricScoring(key);
@@ -553,6 +560,10 @@ function resetSurvey() {
   document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
   document.getElementById('consent-agree-btn').disabled = true;
   
+  if (document.getElementById('profession')) document.getElementById('profession').value = '';
+  if (document.getElementById('email')) document.getElementById('email').value = '';
+  if (document.getElementById('age')) document.getElementById('age').value = '';
+  
   showHomeTab();
 }
 
@@ -601,7 +612,7 @@ function updateResultsView() {
       let total = 0, sum = 0;
       
       modeResponses.forEach(resp => {
-        if (resp.responses[metricKey] && resp.responses[metricKey][itemIdx]) {
+        if (resp.responses[metricKey] && resp.responses[metricKey][itemIdx] !== undefined) {
           const score = resp.responses[metricKey][itemIdx];
           scores[score]++;
           sum += score;
@@ -674,7 +685,7 @@ function exportAllResults() {
     csv += `"${resp.timestamp}","${resp.personalInfo.name || ''}",`;
     
     if (mode === 'alpha') {
-      csv += `"${resp.personalInfo.profession || '"}","${resp.personalInfo.email || ''}",`;
+      csv += `"${resp.personalInfo.profession || ''}","${resp.personalInfo.email || ''}",`;
     } else {
       csv += `"${resp.personalInfo.sex || ''}","${resp.personalInfo.age || ''}","${resp.personalInfo.category || ''}",`;
     }
@@ -700,12 +711,6 @@ function exportAllResults() {
 }
 
 window.onload = function() {
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./service-worker.js')
-      .then(reg => console.log('Service Worker registered'))
-      .catch(err => console.log('Service Worker failed:', err));
-  }
-  
   const stored = localStorage.getItem('mindease-responses');
   allResponses = stored ? JSON.parse(stored) : [];
 };
