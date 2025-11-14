@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<meta name="apple-mobile-web-app-title" content="MindEase"/>
+<meta name="theme-color" content="#4169E1"/>
+<title>MindEase Testing Portal</title>
+<link rel="icon" type="image/png" href="logo.png"/>
+<link rel="apple-touch-icon" href="logo.png"/>
+<link rel="manifest" href="manifest.json"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#4169E1",
+            "background-light": "#F8F9FA",
+            "background-dark": "#101214",
+            "text-light": "#343A40",
+            "text-dark": "#E9ECEF",
+            "secondary-light": "#E9ECEF",
+            "secondary-dark": "#212529",
+          },
+          fontFamily: {
+            "display": ["Manrope", "sans-serif"]
+          },
+          borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+        },
+      },
+    }
+</script>
+<style>
+    body {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      min-height: max(884px, 100dvh);
+    }
+    .screen { display: none; }
+    .screen.active { display: flex; }
+</style>
+</head>
+<body class="font-display">
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-x-hidden">
+
+<!-- Home Screen -->
+<div id="home-screen" class="screen active flex-col items-center justify-between grow w-full max-w-md mx-auto p-4">
+  <div class="flex flex-col items-center pt-8 md:pt-12">
+    <div class="flex items-center justify-center h-16 w-16 bg-primary/20 dark:bg-primary/30 rounded-lg mb-6">
+      <span class="material-symbols-outlined text-primary text-4xl">science</span>
+    </div>
+    <h1 class="text-text-light dark:text-text-dark tracking-tight text-[32px] font-bold leading-tight text-center">MindEase Testing Portal</h1>
+    <p class="text-text-light/80 dark:text-text-dark/80 text-base font-normal leading-normal pt-2 text-center">Please select your testing group to begin.</p>
+  </div>
+  
+  <div class="w-full flex flex-col items-center py-10">
+    <div class="flex w-full flex-col items-stretch gap-6">
+      <div>
+        <button onclick="selectTestingMode('alpha')" class="flex w-full min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 px-5 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 active:scale-95 transition-transform">
+          <span class="truncate">Alpha Testing</span>
+        </button>
+        <p class="text-text-light/60 dark:text-text-dark/60 text-sm font-normal leading-normal pt-2 text-center">For core team & internal feedback.</p>
+      </div>
+      <div>
+        <button onclick="selectTestingMode('beta')" class="flex w-full min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 px-5 bg-secondary-light dark:bg-secondary-dark text-text-light dark:text-text-dark text-base font-bold leading-normal tracking-[0.015em] hover:bg-secondary-light/80 dark:hover:bg-secondary-dark/80 active:scale-95 transition-transform">
+          <span class="truncate">Beta Testing</span>
+        </button>
+        <p class="text-text-light/60 dark:text-text-dark/60 text-sm font-normal leading-normal pt-2 text-center">For invited external participants.</p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="pb-4">
+    <a class="text-primary text-base font-medium leading-normal hover:underline" href="#">Need help?</a>
+  </div>
+</div>
+
+<!-- Metric Selection Screen -->
+<div id="metric-screen" class="screen flex-col h-auto min-h-screen">
+  <header class="flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between sticky top-0 z-10">
+    <button onclick="goToHome()" class="text-gray-800 dark:text-gray-200 flex size-12 shrink-0 items-center justify-center">
+      <span class="material-symbols-outlined text-3xl">arrow_back_ios_new</span>
+    </button>
+    <h1 id="metric-title" class="text-gray-900 dark:text-gray-100 text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-12">Select Metric</h1>
+  </header>
+  
+  <div class="flex w-full flex-row items-center justify-center gap-3 py-5">
+    <div class="h-2 w-2 rounded-full bg-primary"></div>
+    <div class="h-2 w-2 rounded-full bg-primary/20 dark:bg-primary/30"></div>
+    <div class="h-2 w-2 rounded-full bg-primary/20 dark:bg-primary/30"></div>
+    <div class="h-2 w-2 rounded-full bg-primary/20 dark:bg-primary/30"></div>
+    <div class="h-2 w-2 rounded-full bg-primary/20 dark:bg-primary/30"></div>
+  </div>
+  
+  <main id="metric-list" class="flex flex-col gap-4 p-4 pb-24">
+    <!-- Metrics will be dynamically inserted here -->
+  </main>
+</div>
+
+<!-- Item Selection Screen -->
+<div id="item-screen" class="screen flex-col h-auto min-h-screen">
+  <header class="flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between sticky top-0 z-10">
+    <button onclick="goToMetric()" class="text-gray-800 dark:text-gray-200 flex size-12 shrink-0 items-center justify-center">
+      <span class="material-symbols-outlined text-3xl">arrow_back_ios_new</span>
+    </button>
+    <h1 id="item-metric-title" class="text-gray-900 dark:text-gray-100 text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-12">Items</h1>
+  </header>
+  
+  <div class="px-4 pt-4">
+    <div class="flex flex-col gap-3">
+      <div class="flex justify-between items-center">
+        <p class="text-gray-600 dark:text-gray-400 text-sm font-normal leading-normal">Select an item to score.</p>
+        <p id="item-progress" class="text-gray-800 dark:text-gray-200 text-sm font-semibold leading-normal">0 of 5</p>
+      </div>
+      <div class="w-full rounded-full h-2 bg-primary/20">
+        <div id="item-progress-bar" class="h-2 rounded-full bg-primary" style="width: 0%;"></div>
+      </div>
+    </div>
+  </div>
+  
+  <main id="item-list" class="flex-1 px-4 pt-6 pb-8">
+    <div class="flex flex-col gap-3">
+      <!-- Items will be dynamically inserted here -->
+    </div>
+  </main>
+</div>
+
+<!-- Score Input Screen -->
+<div id="score-screen" class="screen flex-col min-h-screen">
+  <header class="flex items-center p-4 pb-2 justify-between sticky top-0 z-10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
+    <div onclick="goToItems()" class="flex size-12 shrink-0 items-center justify-start text-text-light dark:text-text-dark cursor-pointer">
+      <span class="material-symbols-outlined text-3xl">close</span>
+    </div>
+    <h1 class="text-lg font-bold flex-1 text-center">Survey Question</h1>
+    <div class="flex size-12 shrink-0 items-center"></div>
+  </header>
+  
+  <main class="flex flex-1 flex-col px-4">
+    <div class="flex flex-col gap-2 py-4">
+      <p id="score-progress-text" class="text-sm font-medium leading-normal text-text-light/80 dark:text-text-dark/80">Question 1 of 5</p>
+      <div class="h-2 rounded-full bg-gray-300 dark:bg-gray-700">
+        <div id="score-progress-bar" class="h-2 rounded-full bg-primary" style="width: 20%;"></div>
+      </div>
+    </div>
+    
+    <h2 id="score-question" class="text-[28px] font-bold leading-tight pt-8 pb-8 text-left text-text-light dark:text-text-dark">Question will appear here</h2>
+    
+    <div class="flex flex-1 flex-col items-stretch justify-center gap-3 pb-8">
+      <button onclick="selectScore(1)" class="score-button flex w-full min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg border-2 border-red-400 bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400 h-14 px-5 text-base font-bold leading-normal tracking-[0.015em] transition-all hover:bg-red-100 dark:hover:bg-red-900/30 active:scale-95">
+        <span class="truncate">1 - Strongly Disagree</span>
+      </button>
+      <button onclick="selectScore(2)" class="score-button flex w-full min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg border-2 border-orange-400 bg-orange-50 text-orange-600 dark:bg-orange-900/20 dark:text-orange-400 h-14 px-5 text-base font-bold leading-normal tracking-[0.015em] transition-all hover:bg-orange-100 dark:hover:bg-orange-900/30 active:scale-95">
+        <span class="truncate">2 - Disagree</span>
+      </button>
+      <button onclick="selectScore(3)" class="score-button flex w-full min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg border-2 border-gray-400 bg-gray-50 text-gray-600 dark:bg-gray-700/20 dark:text-gray-400 h-14 px-5 text-base font-bold leading-normal tracking-[0.015em] transition-all hover:bg-gray-100 dark:hover:bg-gray-700/30 active:scale-95">
+        <span class="truncate">3 - Neutral</span>
+      </button>
+      <button onclick="selectScore(4)" class="score-button flex w-full min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg border-2 border-blue-400 bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400 h-14 px-5 text-base font-bold leading-normal tracking-[0.015em] transition-all hover:bg-blue-100 dark:hover:bg-blue-900/30 active:scale-95">
+        <span class="truncate">4 - Agree</span>
+      </button>
+      <button onclick="selectScore(5)" class="score-button flex w-full min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg border-2 border-green-400 bg-green-50 text-green-600 dark:bg-green-900/20 dark:text-green-400 h-14 px-5 text-base font-bold leading-normal tracking-[0.015em] transition-all hover:bg-green-100 dark:hover:bg-green-900/30 active:scale-95">
+        <span class="truncate">5 - Strongly Agree</span>
+      </button>
+    </div>
+  </main>
+</div>
+
+<!-- Summary Screen -->
+<div id="summary-screen" class="screen flex-col min-h-screen">
+  <header class="sticky top-0 z-10 flex items-center bg-background-light/80 dark:bg-background-dark/80 p-4 pb-3 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700">
+    <button onclick="goToItems()" class="text-text-light dark:text-text-dark flex size-10 shrink-0 items-center justify-center rounded-full">
+      <span class="material-symbols-outlined text-2xl">arrow_back</span>
+    </button>
+    <h1 class="text-text-light dark:text-text-dark text-lg font-bold leading-tight tracking-tight flex-1 text-center">Survey Results</h1>
+    <div class="size-10 shrink-0"></div>
+  </header>
+  
+  <main class="flex flex-col flex-1 px-4 pt-6 pb-24">
+    <div class="mb-6 rounded-lg bg-white dark:bg-gray-800 p-5 shadow-sm">
+      <p id="summary-metric-title" class="text-xl font-bold leading-tight tracking-tight text-text-light dark:text-text-dark">Metric Results</p>
+      <p id="summary-total" class="mt-1 text-base font-medium leading-normal text-primary">Total Respondents: 0</p>
+    </div>
+    
+    <div id="summary-results" class="flex flex-col gap-6">
+      <!-- Results will be dynamically inserted here -->
+    </div>
+  </main>
+  
+  <div class="fixed bottom-6 right-6 z-20">
+    <button onclick="exportCSV()" class="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white shadow-lg transition-transform duration-200 ease-in-out hover:scale-105 active:scale-95">
+      <span class="material-symbols-outlined text-3xl">ios_share</span>
+    </button>
+  </div>
+</div>
+
+</div>
+
+<script>
+// Survey Data Structure
+const surveyData = {
+  alpha: {
+    title: "Alpha Testing",
+    metrics: {
+      usability: {
+        name: "Usability",
+        icon: "front_hand",
+        items: [
+          "The user interface is self-intuitive and user-friendly.",
+          "The system flow is logical and easy to do transition between the system's functionalities.",
+          "The error messages are clear, easy to understand, and facilitate solutions.",
+          "The time required to load different components of the platform (e.g., chat window, booking page) is acceptable.",
+          "The platform minimizes the number of steps required to perform key actions, such as scheduling an appointment."
+        ]
+      },
+      accessibility: {
+        name: "Accessibility",
+        icon: "accessibility_new",
+        items: [
+          "The system displays consistently across major web browsers (Chrome, Edge, Firefox, etc.).",
+          "The system works properly on both desktop and mobile devices.",
+          "The text size, color contrast, and font choices adhere to general web accessibility standards.",
+          "The system is fully navigated using standard keyboard-only controls.",
+          "The platform handles intermittent or low-bandwidth internet connections gracefully without crashing."
+        ]
+      },
+      effectiveness: {
+        name: "Effectiveness",
+        icon: "target",
+        items: [
+          "All core system features (e.g., registration, video consultation, scheduling) are fully functional without technical errors.",
+          "The AI Companion facilitates the user toward the Professional Consultation Services when complex issues are detected (Safety Protocol).",
+          "The system effectively stores and retrieves data (e.g., user profiles, consultation history) without corruption.",
+          "The appointment scheduling and video consultation features function reliably from start to finish.",
+          "The AI Companion's responses and information are clinically appropriate."
+        ]
+      },
+      security: {
+        name: "Security & Compliance",
+        icon: "verified_user",
+        items: [
+          "The platform provides clear and comprehensive information regarding data privacy and security policies.",
+          "I am satisfied that the system design adheres to ethical standards for handling sensitive mental health data.",
+          "The user authentication process (login/registration) is robust and protects user identity.",
+          "The platform securely handles and encrypts sensitive mental health data during transmission and storage.",
+          "The process for professionals to verify their credentials and join the platform is adequate and secure."
+        ]
+      },
+      maintainability: {
+        name: "Maintainability",
+        icon: "build",
+        items: [
+          "The codebase and technical structure appear organized and would be easy for a new developer to understand and maintain.",
+          "The system uses appropriate technology and established standards to ensure long-term sustainability and future upgrades.",
+          "The system design is modular, allowing individual components (e.g., AI chat, consultation module) to be updated independently.",
+          "The system documentation is comprehensive and accurate to support future enhancement.",
+          "The platform uses widely supported and up-to-date frameworks and libraries (e.g., Django) to ensure longevity."
+        ]
+      }
+    }
+  },
+  beta: {
+    title: "Beta Testing",
+    metrics: {
+      engagement: {
+        name: "Engagement",
+        icon: "favorite",
+        items: [
+          "The AI Companion and self-help tools are interesting enough that I would want to continue using MindEase regularly.",
+          "I found the interactive nature of the platform motivating for maintaining my mental well-being.",
+          "I appreciate the format and delivery of the mental health information provided by the AI Companion.",
+          "The platform's features and contents encourage me to regularly check in on my emotional well-being.",
+          "The overall look and feel of MindEase makes me want to spend more time exploring its support tools."
+        ]
+      },
+      effectiveness: {
+        name: "Effectiveness (Helpfulness)",
+        icon: "health_and_safety",
+        items: [
+          "The guidance, support, and information provided by the AI Companion are helpful for my stress or anxiety.",
+          "I believe the platform provides a valuable pathway to accessing mental health services.",
+          "The platform's design makes it easy for me to identify when I need to escalate from the AI Companion to human consultation.",
+          "I learned new strategies or gained helpful insights from using the AI Companion.",
+          "The self-help tools and guided resources available on the platform are relevant to the challenges I face."
+        ]
+      },
+      satisfaction: {
+        name: "Satisfaction",
+        icon: "sentiment_satisfied",
+        items: [
+          "My overall experience with the MindEase platform met my expectations for a mental health support tool.",
+          "I would recommend MindEase to someone who might need mental health support.",
+          "The waiting time for scheduling a consultation with a professional was acceptable.",
+          "The platform successfully created a sense of trust and confidentiality during my use.",
+          "MindEase's integrated service provides more comprehensive support than using a stand-alone mental health application."
+        ]
+      },
+      usability: {
+        name: "Usability (Interface Clarity)",
+        icon: "touch_app",
+        items: [
+          "The platform is easy to understand, navigate, and requires little effort for me to use successfully.",
+          "The visual design and user interface are appealing and made the experience pleasant.",
+          "The icons, buttons, and navigation labels clearly indicate their function.",
+          "I could easily switch between the AI chat feature and other parts of the platform without confusion.",
+          "The platform provides sufficient guidance or help resources when I encounter a problem."
+        ]
+      },
+      accessibility: {
+        name: "Accessibility (Barrier Mitigation)",
+        icon: "accessible",
+        items: [
+          "The system's online nature significantly reduces the barriers I face in getting support.",
+          "Using MindEase makes me feel less self-conscious or stigmatized than seeking traditional, face-to-face help.",
+          "The platform saves me time and effort compared to trying to find a professional using traditional means.",
+          "The platform's cost-free nature eliminates a major barrier to me seeking mental health support.",
+          "I feel comfortable being completely honest about my mental state when using the AI Companion."
+        ]
+      }
+    }
+  }
+};
+
+// App State
+let currentMode = null;
+let currentMetric = null;
+let currentItem = null;
+let responses = {};
+
+// Initialize responses structure
+function initializeResponses() {
+  responses = {};
+  const mode = surveyData[currentMode];
+  for (let metricKey in mode.metrics) {
+    responses[metricKey] = {};
+    for (let i = 0; i < 5; i++) {
+      responses[metricKey][i] = {
+        1: 0, 2: 0, 3: 0, 4: 0, 5: 0
+      };
+    }
+  }
+  saveToStorage();
+}
+
+// Storage functions
+function saveToStorage() {
+  const data = {
+    mode: currentMode,
+    responses: responses
+  };
+  localStorage.setItem('mindease-survey', JSON.stringify(data));
+}
+
+function loadFromStorage() {
+  const stored = localStorage.getItem('mindease-survey');
+  if (stored) {
+    const data = JSON.parse(stored);
+    currentMode = data.mode;
+    responses = data.responses;
+    return true;
+  }
+  return false;
+}
+
+// Navigation functions
+function showScreen(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+}
+
+function selectTestingMode(mode) {
+  currentMode = mode;
+  initializeResponses();
+  showMetricScreen();
+}
+
+function goToHome() {
+  currentMode = null;
+  currentMetric = null;
+  currentItem = null;
+  showScreen('home-screen');
+}
+
+function goToMetric() {
+  currentMetric = null;
+  currentItem = null;
+  showMetricScreen();
+}
+
+function goToItems() {
+  currentItem = null;
+  showItemScreen();
+}
+
+// Screen rendering functions
+function showMetricScreen() {
+  const mode = surveyData[currentMode];
+  document.getElementById('metric-title').textContent = mode.title + ': Select Metric';
+  
+  const metricList = document.getElementById('metric-list');
+  metricList.innerHTML = '';
+  
+  for (let key in mode.metrics) {
+    const metric = mode.metrics[key];
+    const button = document.createElement('button');
+    button.onclick = () => selectMetric(key);
+    button.className = 'flex w-full items-center gap-4 rounded-lg border border-primary/20 bg-white dark:bg-background-dark dark:border-primary/30 p-4 text-left transition-transform duration-200 ease-in-out active:scale-95 hover:bg-primary/10 dark:hover:bg-primary/20';
+    button.innerHTML = `
+      <div class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/20 text-primary">
+        <span class="material-symbols-outlined">${metric.icon}</span>
+      </div>
+      <h2 class="flex-1 text-base font-bold leading-tight text-text-light dark:text-text-dark">${metric.name}</h2>
+      <span class="material-symbols-outlined text-gray-400 dark:text-gray-500">arrow_forward_ios</span>
+    `;
+    metricList.appendChild(button);
+  }
+  
+  showScreen('metric-screen');
+}
+
+function selectMetric(metricKey) {
+  currentMetric = metricKey;
+  showItemScreen();
+}
+
+function showItemScreen() {
+  const mode = surveyData[currentMode];
+  const metric = mode.metrics[currentMetric];
+  
+  document.getElementById('item-metric-title').textContent = metric.name;
+  
+  // Calculate progress
+  let completed = 0;
+  for (let i = 0; i < 5; i++) {
+    const itemResponses = responses[currentMetric][i];
+    const total = Object.values(itemResponses).reduce((a, b) => a + b, 0);
+    if (total > 0) completed++;
+  }
+  
+  document.getElementById('item-progress').textContent = `${completed} of 5`;
+  document.getElementById('item-progress-bar').style.width = `${(completed / 5) * 100}%`;
+  
+  const itemList = document.getElementById('item-list').querySelector('.flex-col');
+  itemList.innerHTML = '';
+  
+  metric.items.forEach((item, index) => {
+    const itemResponses = responses[currentMetric][index];
+    const total = Object.values(itemResponses).reduce((a, b) => a + b, 0);
+    const isCompleted = total > 0;
+    
+    const itemDiv = document.createElement('div');
+    itemDiv.onclick = () => selectItem(index);
+    itemDiv.className = `flex items-center gap-4 ${isCompleted ? 'bg-background-light dark:bg-background-dark/50 border border-gray-200 dark:border-gray-800' : 'bg-white dark:bg-gray-800/50 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer'} p-4 min-h-14 justify-between rounded-lg`;
+    
+    itemDiv.innerHTML = `
+      <div class="flex items-center gap-4">
+        <div class="${isCompleted ? 'text-white bg-primary' : 'text-gray-800 dark:text-gray-200 bg-primary/20 font-bold text-lg'} flex items-center justify-center rounded-full shrink-0 size-10">
+          ${isCompleted ? '<span class="material-symbols-outlined">check</span>' : index + 1}
+        </div>
+        <p class="text-gray-900 dark:text-gray-100 text-base font-normal leading-normal flex-1">${item}</p>
+      </div>
+      <div class="shrink-0">
+        <div class="${isCompleted ? 'text-gray-400 dark:text-gray-600' : 'text-gray-800 dark:text-gray-200'} flex size-7 items-center justify-center">
+          <span class="material-symbols-outlined text-2xl">chevron_right</span>
+        </div>
+      </div>
+    `;
+    
+    itemList.appendChild(itemDiv);
+  });
+  
+  showScreen('item-screen');
+}
+
+function selectItem(itemIndex) {
+  currentItem = itemIndex;
+  showScoreScreen();
+}
+
+function showScoreScreen() {
+  const mode = surveyData[currentMode];
+  const metric = mode.metrics[currentMetric];
+  const question = metric.items[currentItem];
+  
+  document.getElementById('score-progress-text').textContent = `Question ${currentItem + 1} of 5`;
+  document.getElementById('score-progress-bar').style.width = `${((currentItem + 1) / 5) * 100}%`;
+  document.getElementById('score-question').textContent = question;
+  
+  showScreen('score-screen');
+}
+
+function selectScore(score) {
+  // Save the response
+  responses[currentMetric][currentItem][score]++;
+  saveToStorage();
+  
+  // Show brief feedback
+  const buttons = document.querySelectorAll('.score-button');
+  buttons[score - 1].style.transform = 'scale(0.95)';
+  setTimeout(() => {
+    buttons[score - 1].style.transform = '';
+  }, 200);
+  
+  // Go back to item list after short delay
+  setTimeout(() => {
+    showItemScreen();
+  }, 300);
+}
+
+function showSummaryScreen() {
+  const mode = surveyData[currentMode];
+  const metric = mode.metrics[currentMetric];
+  
+  document.getElementById('summary-metric-title').textContent = metric.name + ' Results';
+  
+  // Calculate total respondents
+  let totalRespondents = 0;
+  for (let i = 0; i < 5; i++) {
+    const itemResponses = responses[currentMetric][i];
+    const itemTotal = Object.values(itemResponses).reduce((a, b) => a + b, 0);
+    totalRespondents = Math.max(totalRespondents, itemTotal);
+  }
+  
+  document.getElementById('summary-total').textContent = `Total Respondents: ${totalRespondents}`;
+  
+  const resultsContainer = document.getElementById('summary-results');
+  resultsContainer.innerHTML = '';
+  
+  metric.items.forEach((item, index) => {
+    const itemResponses = responses[currentMetric][index];
+    const itemTotal = Object.values(itemResponses).reduce((a, b) => a + b, 0);
+    
+    // Calculate average
+    let sum = 0;
+    for (let score = 1; score <= 5; score++) {
+      sum += score * itemResponses[score];
+    }
+    const average = itemTotal > 0 ? (sum / itemTotal).toFixed(1) : 0;
+    
+    const resultCard = document.createElement('div');
+    resultCard.className = 'flex flex-col items-stretch justify-start rounded-lg bg-white dark:bg-gray-800 shadow-sm overflow-hidden';
+    
+    resultCard.innerHTML = `
+      <div class="flex w-full grow flex-col items-stretch justify-center gap-4 p-5">
+        <p class="text-text-light dark:text-text-dark text-base font-bold leading-tight">${item}</p>
+        
+        <div class="flex flex-col">
+          <div class="flex justify-between gap-x-6 py-2 border-b border-gray-200 dark:border-gray-700">
+            <p class="text-gray-500 dark:text-gray-400 text-sm font-medium leading-normal">Score</p>
+            <p class="text-gray-500 dark:text-gray-400 text-sm font-medium leading-normal text-right">Respondents</p>
+          </div>
+          ${[1, 2, 3, 4, 5].map(score => `
+            <div class="flex justify-between gap-x-6 py-2.5">
+              <p class="text-text-light dark:text-text-dark text-sm font-normal leading-normal">${score} (${['Strongly Disagree', 'Disagree', 'Neutral', 'Agree', 'Strongly Agree'][score - 1]})</p>
+              <p class="text-text-light dark:text-text-dark text-sm font-semibold leading-normal text-right">${itemResponses[score]}</p>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      
+      <div class="flex gap-4 p-5 bg-gray-50 dark:bg-black/20 border-t border-gray-200 dark:border-gray-700">
+        <div class="flex flex-1 flex-col gap-1">
+          <p class="text-gray-500 dark:text-gray-400 text-sm font-medium leading-normal">Average Score</p>
+          <p class="text-text-light dark:text-text-dark tracking-tight text-xl font-bold leading-tight">${average}</p>
+        </div>
+        <div class="flex flex-1 flex-col gap-1">
+          <p class="text-gray-500 dark:text-gray-400 text-sm font-medium leading-normal">Total Respondents</p>
+          <p class="text-text-light dark:text-text-dark tracking-tight text-xl font-bold leading-tight">${itemTotal}</p>
+        </div>
+      </div>
+    `;
+    
+    resultsContainer.appendChild(resultCard);
+  });
+  
+  showScreen('summary-screen');
+}
+
+// Add "View Results" button to item screen
+function updateItemScreen() {
+  const existingButton = document.querySelector('#item-screen footer');
+  if (existingButton) return;
+  
+  const footer = document.createElement('footer');
+  footer.className = 'sticky bottom-0 z-10 p-4 mt-auto bg-background-light dark:bg-background-dark';
+  footer.innerHTML = `
+    <button onclick="showSummaryScreen()" class="w-full rounded-full bg-primary py-4 text-center font-bold text-white transition-transform duration-200 ease-in-out active:scale-95">View Results</button>
+  `;
+  
+  document.getElementById('item-screen').appendChild(footer);
+}
+
+// Export CSV function
+function exportCSV() {
+  const mode = surveyData[currentMode];
+  const metric = mode.metrics[currentMetric];
+  
+  let csv = 'Item,Score 1,Score 2,Score 3,Score 4,Score 5,Average,Total\n';
+  
+  metric.items.forEach((item, index) => {
+    const itemResponses = responses[currentMetric][index];
+    const itemTotal = Object.values(itemResponses).reduce((a, b) => a + b, 0);
+    
+    let sum = 0;
+    for (let score = 1; score <= 5; score++) {
+      sum += score * itemResponses[score];
+    }
+    const average = itemTotal > 0 ? (sum / itemTotal).toFixed(2) : 0;
+    
+    const row = [
+      `"${item}"`,
+      itemResponses[1],
+      itemResponses[2],
+      itemResponses[3],
+      itemResponses[4],
+      itemResponses[5],
+      average,
+      itemTotal
+    ].join(',');
+    
+    csv += row + '\n';
+  });
+  
+  // Create download
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `mindease-${currentMode}-${currentMetric}-results.csv`;
+  a.click();
+  window.URL.revokeObjectURL(url);
+}
+
+// Initialize app
+window.onload = function() {
+  // Register service worker for PWA
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(reg => console.log('Service Worker registered'))
+      .catch(err => console.log('Service Worker registration failed'));
+  }
+  
+  if (loadFromStorage()) {
+    // Resume from saved state
+    showMetricScreen();
+  }
+  
+  // Add view results button when item screen is shown
+  const observer = new MutationObserver(() => {
+    if (document.getElementById('item-screen').classList.contains('active')) {
+      updateItemScreen();
+    }
+  });
+  
+  observer.observe(document.getElementById('item-screen'), {
+    attributes: true,
+    attributeFilter: ['class']
+  });
+};
+</script>
+
+</body>
+</html>
