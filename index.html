@@ -670,6 +670,51 @@
 
     let currentMode, currentMetric, currentItemIndex, currentSession, allResponses = [];
 
+    // Add real-time listener for data changes
+    function setupRealTimeListener() {
+      db.collection('survey_responses')
+        .onSnapshot((snapshot) => {
+          console.log('Real-time update detected in survey_responses');
+          // Reload results whenever data changes (including deletions)
+          if (currentScreen === 'results-tab') {
+            loadResults();
+          }
+        }, (error) => {
+          console.error('Real-time listener error:', error);
+        });
+    }
+
+    // Listen for clear signals from other devices
+    function setupClearSignalListener() {
+      db.collection('clear_signals')
+        .orderBy('timestamp', 'desc')
+        .limit(1)
+        .onSnapshot((snapshot) => {
+          if (!snapshot.empty) {
+            const latestSignal = snapshot.docs[0].data();
+            console.log('Clear signal received:', latestSignal.type);
+            
+            // Clear local storage based on signal
+            if (latestSignal.type === 'all') {
+              localStorage.removeItem('mindease-responses');
+              allResponses = [];
+              console.log('Cleared all data from local storage');
+            } else {
+              allResponses = allResponses.filter(r => r.mode !== latestSignal.type);
+              localStorage.setItem('mindease-responses', JSON.stringify(allResponses));
+              console.log(`Cleared ${latestSignal.type} data from local storage`);
+            }
+            
+            // Update view if on results tab
+            if (currentScreen === 'results-tab') {
+              updateResultsView();
+            }
+          }
+        }, (error) => {
+          console.error('Clear signal listener error:', error);
+        });
+    }
+
     function buildFilterOptions() {
       const modeSelect = document.getElementById('results-mode-select');
       const filterSelect = document.getElementById('results-filter-select');
@@ -1555,16 +1600,24 @@
               batch.delete(doc.ref);
             });
             await batch.commit();
+            
+            // Add a marker document to signal other devices to clear local storage
+            await db.collection('clear_signals').add({
+              type: 'all',
+              timestamp: new Date().toISOString(),
+              clearedBy: 'user'
+            });
+            
           } catch (error) {
             console.error('Error clearing Firebase data:', error);
           }
 
-          // Clear local data
+          // Clear local data on THIS device
           localStorage.removeItem('mindease-responses');
           allResponses = [];
           closeClearModal();
           updateResultsView();
-          alert('All data has been cleared.');
+          alert('All data has been cleared. Other devices will update automatically.');
         }
       } else {
         if (confirm(`Are you sure you want to clear all ${type === 'alpha' ? 'Alpha' : 'Beta'} Testing data?`)) {
@@ -1576,16 +1629,24 @@
               batch.delete(doc.ref);
             });
             await batch.commit();
+            
+            // Add type-specific clear signal
+            await db.collection('clear_signals').add({
+              type: type,
+              timestamp: new Date().toISOString(),
+              clearedBy: 'user'
+            });
+            
           } catch (error) {
             console.error('Error clearing Firebase data:', error);
           }
 
-          // Clear from local storage
+          // Clear from local storage on THIS device
           allResponses = allResponses.filter(r => r.mode !== type);
           localStorage.setItem('mindease-responses', JSON.stringify(allResponses));
           closeClearModal();
           updateResultsView();
-          alert(`${type === 'alpha' ? 'Alpha' : 'Beta'} Testing data has been cleared.`);
+          alert(`${type === 'alpha' ? 'Alpha' : 'Beta'} Testing data has been cleared. Other devices will update automatically.`);
         }
       }
     }
@@ -1609,6 +1670,10 @@
         showScreen(currentScreen);
       }
       buildFilterOptions();
+      
+      // Initialize real-time listeners
+      setupRealTimeListener();
+      setupClearSignalListener();
     });
   </script>
   <script>
