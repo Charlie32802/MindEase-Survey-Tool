@@ -699,9 +699,10 @@ function updateResultsView() {
           const labels = {5: 'Strongly Agree', 4: 'Agree', 3: 'Neutral', 2: 'Disagree', 1: 'Strongly Disagree'};
           return `
             <div class="flex items-center gap-3">
-              <div class="w-32 text-sm font-medium">${labels[score]}</div>
-              <div class="flex-1 h-8 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
-                <div class="${colors[score]} h-full flex items-center justify-end pr-3 text-white text-sm font-bold" style="width: ${percentage}%">
+              <div class="w-36 text-sm font-medium">${labels[score]}</div>
+              <div class="flex-1 h-8 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden relative">
+                <div class="${colors[score]} h-full transition-all duration-300" style="width: ${percentage}%"></div>
+                <div class="absolute inset-0 flex items-center justify-start pl-2 text-sm font-bold text-gray-900 dark:text-gray-100">
                   ${percentage}%
                 </div>
               </div>
@@ -905,6 +906,8 @@ function exportAllResults() {
   }
   
   const modeData = surveyData[mode];
+  
+  // CSV Header
   let csv = 'Timestamp,Name,';
   
   if (mode === 'alpha') {
@@ -922,6 +925,7 @@ function exportAllResults() {
   
   csv += 'Comments\n';
   
+  // CSV Data Rows
   modeResponses.forEach(resp => {
     csv += `"${resp.timestamp}","${resp.personalInfo.name || ''}",`;
     
@@ -942,11 +946,75 @@ function exportAllResults() {
     csv += `"${(resp.comments || '').replace(/"/g, '""')}"\n`;
   });
   
-  const blob = new Blob([csv], { type: 'text/csv' });
+  // Add Statistical Summary Sheet
+  csv += '\n\n=== STATISTICAL SUMMARY ===\n';
+  csv += `Testing Mode:,${modeData.title}\n`;
+  csv += `Total Responses:,${modeResponses.length}\n`;
+  csv += `Export Date:,${new Date().toISOString()}\n\n`;
+  
+  // Overall Statistics
+  const overallStats = calculateOverallStatistics(modeResponses, modeData);
+  csv += 'OVERALL STATISTICS\n';
+  csv += `Grand Mean:,${overallStats.grandMean}\n`;
+  csv += `Grand Standard Deviation:,${overallStats.grandStdDev}\n`;
+  csv += `Total Items:,${overallStats.totalItems}\n`;
+  csv += `Total Responses:,${overallStats.totalResponses}\n\n`;
+  
+  // Score Distribution
+  csv += 'OVERALL SCORE DISTRIBUTION\n';
+  csv += 'Score,Count,Percentage\n';
+  [5,4,3,2,1].forEach(score => {
+    const count = overallStats.scoreDistribution[score];
+    const pct = ((count / overallStats.totalResponses) * 100).toFixed(2);
+    csv += `${score},${count},${pct}%\n`;
+  });
+  csv += '\n';
+  
+  // Metric Statistics
+  csv += 'METRIC STATISTICS\n';
+  csv += 'Metric,Mean,Standard Deviation,Interpretation\n';
+  Object.keys(modeData.metrics).forEach(metricKey => {
+    const metric = modeData.metrics[metricKey];
+    const stats = overallStats.metricStats[metricKey];
+    const interpretation = interpretScore(stats.mean).label;
+    csv += `"${metric.name}",${stats.mean},${stats.stdDev},${interpretation}\n`;
+  });
+  csv += '\n';
+  
+  // Detailed Item Statistics
+  csv += 'DETAILED ITEM STATISTICS\n';
+  csv += 'Metric,Question,Mean,Std Dev,Score 1,Score 2,Score 3,Score 4,Score 5\n';
+  
+  Object.keys(modeData.metrics).forEach(metricKey => {
+    const metric = modeData.metrics[metricKey];
+    metric.items.forEach((item, itemIdx) => {
+      const scores = {1:0, 2:0, 3:0, 4:0, 5:0};
+      let total = 0, sum = 0, sumSquares = 0;
+      
+      modeResponses.forEach(resp => {
+        if (resp.responses[metricKey] && resp.responses[metricKey][itemIdx] !== undefined) {
+          const score = resp.responses[metricKey][itemIdx];
+          scores[score]++;
+          sum += score;
+          sumSquares += score * score;
+          total++;
+        }
+      });
+      
+      const mean = total > 0 ? (sum / total).toFixed(2) : '0.00';
+      const variance = total > 0 ? (sumSquares / total) - (parseFloat(mean) * parseFloat(mean)) : 0;
+      const stdDev = Math.sqrt(variance).toFixed(2);
+      
+      csv += `"${metric.name}","${item.replace(/"/g, '""')}",${mean},${stdDev},${scores[1]},${scores[2]},${scores[3]},${scores[4]},${scores[5]}\n`;
+    });
+  });
+  
+  // Download CSV
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `mindease-${mode}-results-${new Date().toISOString().split('T')[0]}.csv`;
+  a.download = `mindease-${mode}-complete-analysis-${new Date().toISOString().split('T')[0]}.csv`;
   a.click();
   URL.revokeObjectURL(url);
 }
