@@ -145,10 +145,223 @@
         transform: rotate(360deg);
       }
     }
+
+    /* Enhanced Splash Screen Animations */
+    @keyframes gradientShift {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    @keyframes fadeInScale {
+      from {
+        opacity: 0;
+        transform: scale(0.5) rotate(-10deg);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+      }
+    }
+
+    @keyframes logoGlow {
+
+      0%,
+      100% {
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+      }
+
+      50% {
+        box-shadow: 0 0 40px rgba(255, 255, 255, 0.6), 0 0 60px rgba(65, 105, 225, 0.4);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes progressBar {
+      from {
+        width: 0%;
+      }
+
+      to {
+        width: 100%;
+      }
+    }
+
+    @keyframes fadeOut {
+      0% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      100% {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+    }
+
+    #splash-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, #667eea 0%, #4169E1 50%, #764ba2 100%);
+      background-size: 200% 200%;
+      animation: gradientShift 8s ease infinite;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      pointer-events: none;
+      padding: 2rem;
+    }
+
+    .splash-logo {
+      animation: fadeInScale 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards, logoGlow 2s ease-in-out infinite;
+      border-radius: 28px;
+    }
+
+    .splash-title {
+      animation: fadeInUp 0.6s ease-out 0.4s both;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      letter-spacing: 1px;
+    }
+
+    .splash-subtitle {
+      animation: fadeInUp 0.6s ease-out 0.6s both;
+      text-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .splash-tagline {
+      animation: fadeInUp 0.6s ease-out 0.8s both;
+      opacity: 0.9;
+      font-size: 0.875rem;
+      margin-top: 0.5rem;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    .splash-progress {
+      animation: fadeInUp 0.6s ease-out 1s both;
+      position: absolute;
+      bottom: 80px;
+      left: 0;
+      right: 0;
+      margin: 0 auto;
+      width: 70%;
+      max-width: 280px;
+      padding: 0 1rem;
+    }
+
+    .splash-progress-bar {
+      height: 4px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+
+    .splash-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #fff, rgba(255, 255, 255, 0.8));
+      animation: progressBar 5.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      border-radius: 10px;
+    }
+
+    .splash-fade-out {
+      animation: fadeOut 0.8s ease-out forwards !important;
+    }
+
+    /* Frequency Distribution Table Styles */
+    .frequency-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .frequency-table th,
+    .frequency-table td {
+      border: 1px solid #e5e7eb;
+      padding: 8px 6px;
+      text-align: center;
+    }
+
+    .frequency-table th {
+      background-color: #f8fafc;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .frequency-table .header-row {
+      background-color: #4169E1 !important;
+      color: white !important;
+      font-weight: bold;
+    }
+
+    .frequency-table .header-row th {
+      background-color: #4169E1 !important;
+      color: white !important;
+      border-color: #4169E1;
+    }
+
+    .dark .frequency-table th,
+    .dark .frequency-table td {
+      border-color: #4b5563;
+    }
+
+    .dark .frequency-table th {
+      background-color: #374151;
+      color: #e5e7eb;
+    }
+
+    .dark .frequency-table .header-row {
+      background-color: #4169E1 !important;
+      color: white !important;
+    }
+
+    .dark .frequency-table .header-row th {
+      background-color: #4169E1 !important;
+      color: white !important;
+      border-color: #4169E1;
+    }
   </style>
 </head>
 
 <body class="font-display">
+
+  <!-- Splash Screen -->
+  <div id="splash-screen">
+    <img src="logo.png" alt="MindEase" class="splash-logo w-32 h-32 mb-6">
+    <h1 class="splash-title text-white text-4xl font-bold mb-2">MindEase</h1>
+    <p class="splash-subtitle text-white/90 text-xl font-medium">Survey Tool</p>
+
+    <div class="splash-progress">
+      <div class="splash-progress-bar">
+        <div class="splash-progress-fill"></div>
+      </div>
+    </div>
+  </div>
 
   <nav
     class="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 z-50 safe-area-inset">
@@ -693,7 +906,7 @@
           if (!snapshot.empty) {
             const latestSignal = snapshot.docs[0].data();
             console.log('Clear signal received:', latestSignal.type);
-            
+
             // Clear local storage based on signal
             if (latestSignal.type === 'all') {
               localStorage.removeItem('mindease-responses');
@@ -704,7 +917,7 @@
               localStorage.setItem('mindease-responses', JSON.stringify(allResponses));
               console.log(`Cleared ${latestSignal.type} data from local storage`);
             }
-            
+
             // Update view if on results tab
             if (currentScreen === 'results-tab') {
               updateResultsView();
@@ -1268,34 +1481,22 @@
     </div>
   `;
 
-      if (filterVal === 'comments') {
-        html += `
-      <div class="bg-white dark:bg-gray-800 rounded-xl p-4 border-2 border-gray-200 dark:border-gray-700">
-        <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
-          <span class="material-symbols-outlined text-primary">chat</span>
-          User Comments and Recommendations
-        </h3>
-        <div class="space-y-4">
-          ${modeResponses.map((response, index) => {
-          const name = response.personalInfo.name || 'Anonymous';
-          const timestamp = new Date(response.timestamp).toLocaleString();
-          const comments = response.comments || 'No comments provided.';
-          return `
-              <div class="border-l-4 border-primary pl-4 py-2">
-                <div class="flex justify-between items-start mb-2">
-                  <p class="font-bold text-sm">${name}</p>
-                  <p class="text-xs text-gray-500">${timestamp}</p>
-                </div>
-                <p class="text-sm text-gray-700 dark:text-gray-300">${comments}</p>
-              </div>
-            `;
-        }).join('')}
+      // === Research Framework Callout ===
+      html += `
+    <div class="bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-200 dark:border-blue-800 rounded-xl p-4 mb-4">
+      <div class="flex items-start gap-3">
+        <span class="material-symbols-outlined text-blue-500 text-xl flex-shrink-0 mt-0.5">lightbulb</span>
+        <div>
+          <h3 class="text-sm font-bold text-blue-800 dark:text-blue-300 mb-1">Research Framework</h3>
+          <p class="text-xs text-blue-700 dark:text-blue-400 leading-relaxed">
+            This evaluation framework is adapted from validated instruments by Cleofas et al. (2023) for mental health platform readiness, 
+            Lattie et al. (2019) for digital intervention engagement metrics, and Borghouts et al. (2021) for sustained user engagement patterns. 
+            These studies inform our assessment of accessibility, effectiveness, and user experience.
+          </p>
         </div>
       </div>
-    `;
-        container.innerHTML = html;
-        return;
-      }
+    </div>
+  `;
 
       // === Overall Stats ===
       html += `
@@ -1388,13 +1589,50 @@
             percentages[s] = total > 0 ? ((scores[s] / total) * 100).toFixed(1) : '0.0';
           });
 
+          // NEW IMPROVED Frequency Distribution Table
+          const freqGrid = `
+  <div class="mt-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">
+    <p class="text-xs font-bold mb-2 text-center">Frequency Distribution</p>
+    <table class="frequency-table">
+      <thead>
+        <tr class="header-row">
+          <th>Score</th>
+          <th>1</th>
+          <th>2</th>
+          <th>3</th>
+          <th>4</th>
+          <th>5</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="font-medium">Count</td>
+          <td>${scores[1]}</td>
+          <td>${scores[2]}</td>
+          <td>${scores[3]}</td>
+          <td>${scores[4]}</td>
+          <td>${scores[5]}</td>
+        </tr>
+        <tr>
+          <td class="font-medium">Percentage</td>
+          <td>${percentages[1]}%</td>
+          <td>${percentages[2]}%</td>
+          <td>${percentages[3]}%</td>
+          <td>${percentages[4]}%</td>
+          <td>${percentages[5]}%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+`;
+
           metricHtml += `
         <div class="mb-3 pb-3 ${itemIdx < 4 ? 'border-b border-gray-200 dark:border-gray-700' : ''}">
           <p class="font-medium text-xs mb-2">${itemIdx + 1}. ${item}</p>
           <div class="flex items-center gap-2 mb-2">
             <div class="flex-1 flex gap-1 h-6">
               ${[1, 2, 3, 4, 5].map(s => `
-                <div class="${['bg-red-400', 'bg-orange-400', 'bg-amber-400', 'bg-blue-400', 'bg-green-400'][s - 1]}"
+                <div class="${['bg-red-400', 'bg-orange-400', 'bg-gray-400', 'bg-blue-400', 'bg-green-400'][s - 1]}"
                      style="width: ${percentages[s]}%" title="Score ${s}: ${scores[s]} (${percentages[s]}%)"></div>
               `).join('')}
             </div>
@@ -1413,6 +1651,7 @@
               <p class="font-bold text-purple-600">${total}</p>
             </div>
           </div>
+          ${freqGrid}
         </div>
       `;
         });
@@ -1537,6 +1776,7 @@
         csv += 'Sex,Age,Category,';
       }
 
+      // Individual question columns
       Object.keys(modeData.metrics).forEach(metricKey => {
         const metric = modeData.metrics[metricKey];
         metric.items.forEach((item, idx) => {
@@ -1544,8 +1784,17 @@
         });
       });
 
+      // Statistical columns for each metric
+      Object.keys(modeData.metrics).forEach(metricKey => {
+        const metric = modeData.metrics[metricKey];
+        csv += `${metric.name} Mean,${metric.name} Std Dev,`;
+        csv += `${metric.name} Freq_1,${metric.name} Freq_2,${metric.name} Freq_3,${metric.name} Freq_4,${metric.name} Freq_5,`;
+        csv += `${metric.name} Pct_1,${metric.name} Pct_2,${metric.name} Pct_3,${metric.name} Pct_4,${metric.name} Pct_5,`;
+      });
+
       csv += 'Comments\n';
 
+      // Individual response rows
       modeResponses.forEach(response => {
         const row = [];
         row.push(response.timestamp);
@@ -1560,6 +1809,7 @@
           row.push(response.personalInfo.category || '');
         }
 
+        // Individual question scores
         Object.keys(modeData.metrics).forEach(metricKey => {
           const metric = modeData.metrics[metricKey];
           metric.items.forEach((item, idx) => {
@@ -1568,8 +1818,38 @@
           });
         });
 
+        // Statistical data for each metric (empty for individual rows)
+        Object.keys(modeData.metrics).forEach(metricKey => {
+          row.push('', '', '', '', '', '', '', '', '', '', '', '');
+        });
+
         row.push(`"${(response.comments || '').replace(/"/g, '""')}"`);
         csv += row.join(',') + '\n';
+      });
+
+      // Add blank rows before summary
+      csv += ',,,,\n,,,,\n,,,,\n';
+
+      // Summary Statistics Header
+      csv += '"SUMMARY STATISTICS",,,,\n';
+
+      // Grand statistics
+      const overallStats = calculateOverallStatistics(modeResponses, modeData);
+      csv += `"Grand Mean","${overallStats.grandMean}","Grand Std Dev","${overallStats.grandStdDev}","Total Responses","${modeResponses.length}"\n`;
+
+      // Metric statistics
+      Object.keys(modeData.metrics).forEach(metricKey => {
+        const metric = modeData.metrics[metricKey];
+        const stats = calculateMetricStatistics(modeResponses, metricKey, metric);
+
+        const metricRow = [
+          `"${metric.name}"`,
+          `Mean: ${stats.mean}`,
+          `Std Dev: ${stats.stdDev}`,
+          `Freq: ${stats.freq[1]},${stats.freq[2]},${stats.freq[3]},${stats.freq[4]},${stats.freq[5]}`,
+          `Pct: ${stats.pct[1]}%,${stats.pct[2]}%,${stats.pct[3]}%,${stats.pct[4]}%,${stats.pct[5]}%`
+        ];
+        csv += metricRow.join(',') + '\n';
       });
 
       const blob = new Blob([csv], { type: 'text/csv' });
@@ -1579,6 +1859,39 @@
       a.download = `mindease-${mode}-results-${new Date().toISOString().split('T')[0]}.csv`;
       a.click();
       window.URL.revokeObjectURL(url);
+    }
+
+    function calculateMetricStatistics(responses, metricKey, metric) {
+      const scores = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+      let total = 0, sum = 0, sumSquares = 0;
+
+      metric.items.forEach((item, itemIdx) => {
+        responses.forEach(resp => {
+          if (resp.responses[metricKey]?.[itemIdx] !== undefined) {
+            const score = resp.responses[metricKey][itemIdx];
+            scores[score]++;
+            sum += score;
+            sumSquares += score * score;
+            total++;
+          }
+        });
+      });
+
+      const mean = total > 0 ? (sum / total).toFixed(2) : '0.00';
+      const variance = total > 0 ? (sumSquares / total) - (mean * mean) : 0;
+      const stdDev = total > 0 ? Math.sqrt(variance).toFixed(2) : '0.00';
+
+      const pct = {};
+      [1, 2, 3, 4, 5].forEach(s => {
+        pct[s] = total > 0 ? ((scores[s] / total) * 100).toFixed(1) : '0.0';
+      });
+
+      return {
+        mean,
+        stdDev,
+        freq: scores,
+        pct
+      };
     }
 
     function clearDataPrompt() {
@@ -1600,14 +1913,14 @@
               batch.delete(doc.ref);
             });
             await batch.commit();
-            
+
             // Add a marker document to signal other devices to clear local storage
             await db.collection('clear_signals').add({
               type: 'all',
               timestamp: new Date().toISOString(),
               clearedBy: 'user'
             });
-            
+
           } catch (error) {
             console.error('Error clearing Firebase data:', error);
           }
@@ -1629,14 +1942,14 @@
               batch.delete(doc.ref);
             });
             await batch.commit();
-            
+
             // Add type-specific clear signal
             await db.collection('clear_signals').add({
               type: type,
               timestamp: new Date().toISOString(),
               clearedBy: 'user'
             });
-            
+
           } catch (error) {
             console.error('Error clearing Firebase data:', error);
           }
@@ -1651,8 +1964,33 @@
       }
     }
 
+    // Splash Screen Management - Updated to 5 seconds
+    function handleSplashScreen() {
+      const splashScreen = document.getElementById('splash-screen');
+      const splashShown = sessionStorage.getItem('splashShown');
+
+      if (!splashShown) {
+        // Show splash screen on first load
+        splashScreen.style.display = 'flex';
+
+        // Hide after 5 seconds (increased from 2 seconds)
+        setTimeout(() => {
+          splashScreen.classList.add('splash-fade-out');
+          setTimeout(() => {
+            splashScreen.style.display = 'none';
+            sessionStorage.setItem('splashShown', 'true');
+          }, 800);
+        }, 6000); // Changed to 6000 (6 seconds)
+      } else {
+        // Already shown, hide immediately
+        splashScreen.style.display = 'none';
+      }
+    }
+
     // Load responses and restore session on page load
     window.addEventListener('DOMContentLoaded', () => {
+      handleSplashScreen();
+
       const stored = localStorage.getItem('mindease-responses');
       if (stored) {
         allResponses = JSON.parse(stored);
@@ -1670,7 +2008,7 @@
         showScreen(currentScreen);
       }
       buildFilterOptions();
-      
+
       // Initialize real-time listeners
       setupRealTimeListener();
       setupClearSignalListener();
