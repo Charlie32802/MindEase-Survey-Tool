@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mindease-v1';
+const CACHE_NAME = 'mindease-v2';
 const urlsToCache = [
   './',
   './index.html',
