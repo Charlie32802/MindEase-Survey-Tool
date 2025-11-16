@@ -3,14 +3,18 @@
 
 <head>
   <meta charset="utf-8" />
-  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="MindEase" />
   <meta name="theme-color" content="#4169E1" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="format-detection" content="telephone=no" />
   <title>MindEase Testing Portal</title>
   <link rel="icon" type="image/png" href="logo.png">
   <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="./logo.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./logo.png">
 
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -58,12 +62,21 @@
     }
   </script>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       min-height: 100vh;
       overflow-x: hidden;
       background: #FAFBFC;
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+      position: relative;
     }
 
     .dark body {
@@ -81,8 +94,8 @@
     }
 
     .fit-viewport {
-      min-height: calc(100vh - 5rem);
-      max-height: calc(100vh - 5rem);
+      min-height: calc(100vh - 5rem - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+      max-height: calc(100vh - 5rem - env(safe-area-inset-top) - env(safe-area-inset-bottom));
     }
 
     @keyframes slideInRight {
@@ -104,6 +117,7 @@
 
     .tab-button {
       transition: all 0.3s ease;
+      min-height: 64px;
     }
 
     .tab-button.active {
@@ -116,7 +130,6 @@
       transition: background-color 0.3s ease, border-color 0.3s ease;
     }
 
-    /* Fix for consistent border thickness on focus */
     input[type="text"]:focus,
     input[type="email"]:focus,
     select:focus,
@@ -146,7 +159,6 @@
       }
     }
 
-    /* Enhanced Splash Screen Animations */
     @keyframes gradientShift {
       0% {
         background-position: 0% 50%;
@@ -233,6 +245,8 @@
       z-index: 9999;
       pointer-events: none;
       padding: 2rem;
+      padding-top: calc(2rem + env(safe-area-inset-top));
+      padding-bottom: calc(2rem + env(safe-area-inset-bottom));
     }
 
     .splash-logo {
@@ -290,7 +304,6 @@
       animation: fadeOut 0.8s ease-out forwards !important;
     }
 
-    /* Frequency Distribution Table Styles */
     .frequency-table {
       width: 100%;
       border-collapse: collapse;
@@ -343,10 +356,213 @@
       color: white !important;
       border-color: #4169E1;
     }
+
+    .score-btn {
+      min-height: 48px;
+      padding: 12px !important;
+      position: relative;
+      overflow: visible;
+      transition: all 0.2s ease;
+      margin-bottom: 8px;
+    }
+
+    .score-btn::after {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border: 2px dashed transparent;
+      border-radius: 14px;
+      pointer-events: none;
+      transition: all 0.2s;
+    }
+
+    .score-btn:active::after {
+      border-color: currentColor;
+      opacity: 0.3;
+    }
+
+    input[type="radio"] {
+      width: 24px !important;
+      height: 24px !important;
+    }
+
+    button .material-symbols-outlined {
+      padding: 8px;
+    }
+
+    #clear-modal {
+      align-items: flex-end !important;
+    }
+
+    #clear-modal>div {
+      border-radius: 24px 24px 0 0 !important;
+      max-width: 100% !important;
+      width: 100% !important;
+      margin: 0 !important;
+      animation: slideUp 0.3s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(100%);
+      }
+
+      to {
+        transform: translateY(0);
+      }
+    }
+
+    #comments {
+      font-size: 16px !important;
+      min-height: 120px;
+      max-height: 200px;
+    }
+
+    .refresh-indicator {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+
+    .refresh-indicator.visible {
+      opacity: 1;
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: loading 1.5s infinite;
+    }
+
+    @keyframes loading {
+      0% {
+        background-position: 200% 0;
+      }
+
+      100% {
+        background-position: -200% 0;
+      }
+    }
+
+    .scrollable-content {
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      width: 100%;
+    }
+
+    .compact-layout {
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+    }
+
+    #metric-screen {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    #metric-list {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      width: 100%;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .metric-item {
+      width: 100%;
+      margin-bottom: 6px;
+      flex-shrink: 0;
+      padding: 10px !important;
+      min-height: 56px;
+      overflow: hidden;
+    }
+
+    #metric-list.space-y-3>*+* {
+      margin-top: 0.5rem;
+    }
+
+    #metric-progress {
+      margin-bottom: 0.75rem;
+    }
+
+    .metric-item .w-9 {
+      width: 2rem !important;
+      height: 2rem !important;
+    }
+
+    .metric-item .text-lg {
+      font-size: 1rem !important;
+    }
+
+    #scoring-screen {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    #scoring-question {
+      font-size: 16px;
+      line-height: 1.4;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
+    }
+
+    .scoring-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow: hidden;
+      width: 100%;
+      padding: 0 0 16px 0;
+    }
+
+    #scoring-screen .space-y-2 {
+      padding-bottom: 12px;
+    }
+
+    .no-horizontal-scroll {
+      overflow-x: hidden;
+      max-width: 100%;
+    }
+
+    .complete-survey-btn {
+      margin-top: 6px;
+      width: 100%;
+      padding: 10px !important;
+      min-height: 56px;
+    }
+
+    .complete-survey-btn .w-10 {
+      width: 2rem !important;
+      height: 2rem !important;
+    }
+
+    .complete-survey-btn .text-xl {
+      font-size: 1rem !important;
+    }
   </style>
 </head>
 
-<body class="font-display">
+<body class="font-display no-horizontal-scroll">
 
   <!-- Splash Screen -->
   <div id="splash-screen">
@@ -362,7 +578,8 @@
   </div>
 
   <nav
-    class="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 z-50 safe-area-inset">
+    class="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 z-50 safe-area-inset"
+    style="padding-bottom: env(safe-area-inset-bottom);">
     <div class="flex max-w-md mx-auto">
       <button type="button" onclick="showHomeTab()" id="tab-home"
         class="tab-button active flex-1 flex flex-col items-center py-3 px-4">
@@ -377,7 +594,7 @@
     </div>
   </nav>
 
-  <div class="pb-20 max-w-md mx-auto">
+  <div class="pb-20 max-w-md mx-auto w-full no-horizontal-scroll">
 
     <div id="home-tab" class="screen active flex-col fit-viewport p-6">
       <div class="flex-1 flex flex-col items-center justify-center max-w-md mx-auto w-full">
@@ -424,7 +641,7 @@
         <h1 class="text-lg font-bold ml-3">Data Privacy Consent</h1>
       </div>
 
-      <div class="flex-1 flex flex-col justify-center min-h-0">
+      <div class="flex-1 flex flex-col justify-center min-h-0 scrollable-content compact-layout">
         <div
           class="bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-200 dark:border-blue-800 rounded-xl p-4 mb-4 text-sm leading-relaxed">
           The researchers value the confidentiality of any data you have entrusted to us. We will use your given
@@ -463,7 +680,7 @@
         <h1 class="text-lg font-bold ml-3">Personal Information</h1>
       </div>
 
-      <div class="flex-1 flex flex-col justify-center space-y-4 min-h-0">
+      <div class="flex-1 flex flex-col justify-center space-y-4 min-h-0 scrollable-content compact-layout">
         <div>
           <label class="block text-xs font-medium mb-1">Name (Optional)</label>
           <input type="text" id="respondent-name"
@@ -558,7 +775,8 @@
         </div>
       </div>
 
-      <div id="metric-list" class="space-y-3 flex-1 flex flex-col justify-center min-h-0">
+      <div id="metric-list" class="flex-1 overflow-y-auto scrollable-content compact-layout space-y-3">
+        <!-- Metrics will be rendered here -->
       </div>
     </div>
 
@@ -584,10 +802,10 @@
         </div>
       </div>
 
-      <div class="flex-1 px-5 flex flex-col justify-center min-h-0">
-        <p id="scoring-question" class="text-base font-bold leading-tight mb-6"></p>
+      <div class="scoring-content px-5 compact-layout">
+        <p id="scoring-question" class="text-base font-bold leading-tight mb-4 break-words hyphens-auto"></p>
 
-        <div class="space-y-3">
+        <div class="space-y-2 w-full">
           <button type="button" onclick="selectScore(5)" data-score="5"
             class="score-btn w-full p-3 rounded-xl border-3 border-green-400 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 font-bold hover:bg-green-100 dark:hover:bg-green-900/30 transition-all duration-200 flex items-center justify-between">
             <span class="text-xs">Strongly Agree</span>
@@ -642,12 +860,12 @@
         <h1 class="text-lg font-bold ml-3">Final Step</h1>
       </div>
 
-      <div class="flex-1 flex flex-col justify-center min-h-0">
+      <div class="flex-1 flex flex-col justify-center min-h-0 scrollable-content compact-layout">
         <label class="block text-sm font-bold mb-2">Comments and Recommendations <span
             class="text-red-500">*</span></label>
         <p class="text-xs text-gray-600 dark:text-gray-400 mb-3">Please share any technical observations, bug reports,
           or recommendations for improving the system.</p>
-        <textarea id="comments" rows="10" required
+        <textarea id="comments" rows="6" required
           class="w-full px-3 py-2.5 text-sm rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-primary outline-none transition-colors resize-none"
           placeholder="Enter your comments here..." oninput="validateComments()"></textarea>
       </div>
@@ -671,6 +889,11 @@
     </div>
 
     <div id="results-tab" class="screen flex-col fit-viewport p-5 overflow-y-auto">
+      <div class="refresh-indicator" id="refresh-indicator">
+        <div class="loading-spinner"></div>
+        <span class="ml-2 text-sm text-gray-600">Refreshing...</span>
+      </div>
+
       <h1 class="text-xl font-bold mb-4 flex-shrink-0">Survey Results</h1>
 
       <div class="space-y-3 mb-4 flex-shrink-0">
@@ -704,7 +927,7 @@
         </div>
       </div>
 
-      <div id="results-content" class="space-y-4 flex-1 overflow-y-auto">
+      <div id="results-content" class="space-y-4 flex-1 overflow-y-auto scrollable-content">
         <div class="text-center py-12 text-gray-500">
           <span class="material-symbols-outlined text-6xl mb-3">bar_chart</span>
           <p>Select a testing mode to view results</p>
@@ -749,6 +972,13 @@
   <script>
     let currentScreen = 'home-tab';
     const SESSION_KEY = 'mindease-current-session';
+
+    // Haptic Feedback Function
+    function vibrate(pattern = 10) {
+      if (navigator.vibrate) {
+        navigator.vibrate(pattern);
+      }
+    }
 
     function saveSessionState() {
       if (currentSession) {
@@ -880,6 +1110,14 @@
     };
 
     let currentMode, currentMetric, currentItemIndex, currentSession, allResponses = [];
+
+    // Swipe gesture variables
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    // Pull-to-refresh variables
+    let startY = 0;
+    let isPulling = false;
 
     // Add real-time listener for data changes
     function setupRealTimeListener() {
@@ -1094,7 +1332,7 @@
 
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = `w-full p-3.5 rounded-xl border-2 transition-all duration-200 active:scale-95 animate-slide-in flex items-center gap-3 ${isComplete ? 'bg-green-50 dark:bg-green-900/20 border-green-400' : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-primary'}`;
+        btn.className = `metric-item w-full p-3.5 rounded-xl border-2 transition-all duration-200 active:scale-95 animate-slide-in flex items-center gap-3 ${isComplete ? 'bg-green-50 dark:bg-green-900/20 border-green-400' : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-primary'}`;
         btn.style.animationDelay = `${idx * 0.2}s`;
         btn.onclick = () => startMetricScoring(key);
 
@@ -1108,15 +1346,15 @@
         }
 
         btn.innerHTML = `
-      <div class="w-10 h-10 rounded-full ${isComplete ? 'bg-green-500 text-white' : 'bg-primary/20 text-primary'} flex items-center justify-center flex-shrink-0">
-        <span class="material-symbols-outlined text-xl">${isComplete ? 'check' : metric.icon}</span>
-      </div>
-      <div class="flex-1 text-left">
-        <h3 class="font-bold text-sm">${metric.name}</h3>
-        <p class="text-xs text-gray-600 dark:text-gray-400">${statusText}</p>
-      </div>
-      <span class="material-symbols-outlined text-xl text-gray-400">arrow_forward_ios</span>
-    `;
+  <div class="w-8 h-8 rounded-full ${isComplete ? 'bg-green-500 text-white' : 'bg-primary/20 text-primary'} flex items-center justify-center flex-shrink-0">
+    <span class="material-symbols-outlined text-base">${isComplete ? 'check' : metric.icon}</span>
+  </div>
+  <div class="flex-1 text-left min-w-0">
+    <h3 class="font-bold text-xs truncate">${metric.name}</h3>
+    <p class="text-[10px] text-gray-600 dark:text-gray-400 truncate">${statusText}</p>
+  </div>
+  <span class="material-symbols-outlined text-base text-gray-400 flex-shrink-0">arrow_forward_ios</span>
+`;
 
         list.appendChild(btn);
       });
@@ -1128,7 +1366,7 @@
       if (allMetricsComplete && !commentsComplete) {
         const completeBtn = document.createElement('button');
         completeBtn.type = 'button';
-        completeBtn.className = 'w-full p-3.5 rounded-xl border-2 border-orange-400 bg-orange-50 dark:bg-orange-900/20 transition-all duration-200 active:scale-95 animate-slide-in flex items-center gap-3 mt-4';
+        completeBtn.className = 'complete-survey-btn w-full p-3.5 rounded-xl border-2 border-orange-400 bg-orange-50 dark:bg-orange-900/20 transition-all duration-200 active:scale-95 animate-slide-in flex items-center gap-3';
         completeBtn.style.animationDelay = '1s';
         completeBtn.onclick = () => {
           document.getElementById('submit-survey-btn').disabled = true;
@@ -1139,15 +1377,15 @@
         };
 
         completeBtn.innerHTML = `
-      <div class="w-10 h-10 rounded-full bg-orange-500 text-white flex items-center justify-center flex-shrink-0">
-        <span class="material-symbols-outlined text-xl">edit_note</span>
-      </div>
-      <div class="flex-1 text-left">
-        <h3 class="font-bold text-sm">Complete Survey</h3>
-        <p class="text-xs text-gray-600 dark:text-gray-400">Provide comments and submit</p>
-      </div>
-      <span class="material-symbols-outlined text-xl text-orange-600">arrow_forward_ios</span>
-    `;
+  <div class="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center flex-shrink-0">
+    <span class="material-symbols-outlined text-base">edit_note</span>
+  </div>
+  <div class="flex-1 text-left min-w-0">
+    <h3 class="font-bold text-xs truncate">Complete Survey</h3>
+    <p class="text-[10px] text-gray-600 dark:text-gray-400 truncate">Provide comments and submit</p>
+  </div>
+  <span class="material-symbols-outlined text-base text-orange-600 flex-shrink-0">arrow_forward_ios</span>
+`;
 
         list.appendChild(completeBtn);
       }
@@ -1190,7 +1428,10 @@
       document.getElementById('scoring-metric-name').textContent = metric.name;
       document.getElementById('scoring-progress-text').textContent = `Question ${currentItemIndex + 1} of 5`;
       document.getElementById('scoring-progress-bar').style.width = `${((currentItemIndex + 1) / 5) * 100}%`;
-      document.getElementById('scoring-question').textContent = metric.items[currentItemIndex];
+
+      // Set the question text with proper text wrapping
+      const questionElement = document.getElementById('scoring-question');
+      questionElement.textContent = metric.items[currentItemIndex];
 
       updateNavigationButtons();
 
@@ -1203,6 +1444,8 @@
     }
 
     function selectScore(score) {
+      vibrate(10); // Light tap feedback when selecting score
+
       document.querySelectorAll('.score-btn').forEach(btn => {
         btn.classList.remove('ring-4', 'ring-primary', 'scale-105');
       });
@@ -1252,6 +1495,8 @@
     }
 
     function nextQuestion() {
+      vibrate(15); // Slightly stronger feedback when moving forward
+
       // Get the temporarily selected score
       const selectedBtn = document.querySelector('.score-btn.ring-4.ring-primary');
 
@@ -1274,6 +1519,8 @@
     }
 
     function previousQuestion() {
+      vibrate(5); // Subtle feedback when going back
+
       if (currentItemIndex > 0) {
         currentItemIndex--;
         showScoringScreen();
@@ -1288,7 +1535,7 @@
 
       if (allComplete) {
         document.getElementById('submit-survey-btn').disabled = true;
-        document.getElementById('comments').value = currentSession.comments || ''; // Changed from ''
+        document.getElementById('comments').value = currentSession.comments || '';
         showScreen('comments-screen');
         currentScreen = 'comments-screen';
         saveSessionState();
@@ -1317,10 +1564,10 @@
 
       currentSession.comments = comments;
 
-      // Show loading state
+      // Show loading state without changing button size
       const submitBtn = document.getElementById('submit-survey-btn');
       const originalText = submitBtn.innerHTML;
-      submitBtn.innerHTML = '<div class="loading-spinner"></div>';
+      submitBtn.innerHTML = '<div class="loading-spinner" style="width: 20px; height: 20px;"></div>';
       submitBtn.disabled = true;
 
       try {
@@ -1344,6 +1591,7 @@
         allResponses.push(currentSession);
         localStorage.setItem('mindease-responses', JSON.stringify(allResponses));
 
+        vibrate([10, 50, 10]); // Success pattern
         clearSessionState();
         showScreen('success-screen');
         currentScreen = 'success-screen';
@@ -1377,7 +1625,7 @@
 
     async function loadResults() {
       const container = document.getElementById('results-content');
-      container.innerHTML = '<div class="text-center py-8"><div class="loading-spinner"></div><p class="mt-4 text-gray-600">Loading results...</p></div>';
+      container.innerHTML = showLoadingSkeleton();
 
       try {
         // Try to get data from Firebase first
@@ -1429,6 +1677,17 @@
         allResponses = stored ? JSON.parse(stored) : [];
         updateResultsView();
       }
+    }
+
+    function showLoadingSkeleton() {
+      return `
+        <div class="space-y-4 animate-pulse">
+          <div class="h-24 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+          <div class="h-40 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+          <div class="h-40 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+          <div class="h-32 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+        </div>
+      `;
     }
 
     let lastMode = null;
@@ -1519,14 +1778,14 @@
       </div>
       <div class="overflow-x-auto">
         <table class="w-full text-xs">
-          <thead class="bg-gray-50 dark:bg-gray-700">
-            <tr>
-              <th class="text-left p-2 font-bold">Metric</th>
-              <th class="text-center p-2 font-bold">Mean</th>
-              <th class="text-center p-2 font-bold">Std. Dev.</th>
-              <th class="text-center p-2 font-bold">Interpretation</th>
-            </tr>
-          </thead>
+  <thead class="bg-gray-50 dark:bg-gray-700">
+    <tr>
+      <th class="text-left p-2 font-bold">Metric</th>
+      <th class="text-center p-2 font-bold whitespace-nowrap">Mean</th>
+      <th class="text-center p-2 font-bold whitespace-nowrap">Std. Dev.</th>
+      <th class="text-center p-2 font-bold whitespace-nowrap">Interpretation</th>
+    </tr>
+  </thead>
           <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
             ${Object.keys(modeData.metrics).map(metricKey => {
         const stats = overallStats.metricStats[metricKey];
@@ -1659,31 +1918,31 @@
       });
 
       // === Add Comments if "All" is selected ===
-      if (filterVal === 'all') {
+      if (filterVal === 'all' || filterVal === 'comments') {
         const commentsCard = document.createElement('div');
         commentsCard.className = 'bg-white dark:bg-gray-800 rounded-xl p-4 border-2 border-gray-200 dark:border-gray-700 mb-4';
         commentsCard.innerHTML = `
-      <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
-        <span class="material-symbols-outlined text-primary">chat</span>
-        User Comments and Recommendations
-      </h3>
-      <div class="space-y-4">
-        ${modeResponses.map(r => {
+    <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+      <span class="material-symbols-outlined text-primary">chat</span>
+      User Comments and Recommendations
+    </h3>
+    <div class="space-y-4">
+      ${modeResponses.map(r => {
           const name = r.personalInfo.name || 'Anonymous';
           const time = new Date(r.timestamp).toLocaleString();
           const comment = r.comments || 'No comments.';
           return `
-            <div class="border-l-4 border-primary pl-4 py-2">
-              <div class="flex justify-between items-start mb-2">
-                <p class="font-bold text-sm">${name}</p>
-                <p class="text-xs text-gray-500">${time}</p>
-              </div>
-              <p class="text-sm text-gray-700 dark:text-gray-300">${comment}</p>
+          <div class="border-l-4 border-primary pl-4 py-2">
+            <div class="flex justify-between items-start mb-2">
+              <p class="font-bold text-sm">${name}</p>
+              <p class="text-xs text-gray-500">${time}</p>
             </div>
-          `;
+            <p class="text-sm text-gray-700 dark:text-gray-300">${comment}</p>
+          </div>
+        `;
         }).join('')}
-      </div>
-    `;
+    </div>
+  `;
         container.appendChild(commentsCard);
       }
     }
@@ -1962,26 +2221,68 @@
       }
     }
 
+    // Swipe gesture handling for scoring screen
+    function handleSwipe() {
+      if (touchEndX < touchStartX - 50) {
+        // Swiped left - next question
+        if (!document.getElementById('next-question-btn').disabled) {
+          nextQuestion();
+        }
+      }
+      if (touchEndX > touchStartX + 50) {
+        // Swiped right - previous question
+        if (!document.getElementById('prev-question-btn').disabled) {
+          previousQuestion();
+        }
+      }
+    }
+
+    // Pull-to-refresh functionality
+    function showRefreshIndicator() {
+      document.getElementById('refresh-indicator').classList.add('visible');
+    }
+
+    function hideRefreshIndicator() {
+      document.getElementById('refresh-indicator').classList.remove('visible');
+    }
+
     // Splash Screen Management - Updated to 5 seconds
     function handleSplashScreen() {
       const splashScreen = document.getElementById('splash-screen');
       const splashShown = sessionStorage.getItem('splashShown');
 
       if (!splashShown) {
+        // Set body and html background to match splash during entrance
+        document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #4169E1 50%, #764ba2 100%)';
+        document.documentElement.style.background = '#667eea';
+
         // Show splash screen on first load
         splashScreen.style.display = 'flex';
 
-        // Hide after 5 seconds (increased from 2 seconds)
+        // Hide after 6 seconds
         setTimeout(() => {
+          // Start transitioning body background to white BEFORE fade-out begins
+          document.body.style.transition = 'background 0.8s ease';
+          document.documentElement.style.transition = 'background 0.8s ease';
+          document.body.style.background = '#FAFBFC';
+          document.documentElement.style.background = '#FAFBFC';
+
+          // Start splash fade-out at the same time
           splashScreen.classList.add('splash-fade-out');
+
           setTimeout(() => {
             splashScreen.style.display = 'none';
+            // Remove transition after animation completes
+            document.body.style.transition = '';
+            document.documentElement.style.transition = '';
             sessionStorage.setItem('splashShown', 'true');
           }, 800);
-        }, 6000); // Changed to 6000 (6 seconds)
+        }, 6000);
       } else {
-        // Already shown, hide immediately
+        // Already shown, hide immediately and ensure white background
         splashScreen.style.display = 'none';
+        document.body.style.background = '#FAFBFC';
+        document.documentElement.style.background = '#FAFBFC';
       }
     }
 
@@ -1992,6 +2293,15 @@
       const stored = localStorage.getItem('mindease-responses');
       if (stored) {
         allResponses = JSON.parse(stored);
+      }
+
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('mode') === 'alpha') {
+        setTimeout(() => startSurvey('alpha'), 6500);
+      } else if (params.get('mode') === 'beta') {
+        setTimeout(() => startSurvey('beta'), 6500);
+      } else if (params.get('tab') === 'results') {
+        setTimeout(() => showResultsTab(), 6500);
       }
 
       // Try to restore previous session
@@ -2010,6 +2320,61 @@
       // Initialize real-time listeners
       setupRealTimeListener();
       setupClearSignalListener();
+
+      // Setup swipe gestures for scoring screen
+      const scoringScreen = document.getElementById('scoring-screen');
+      if (scoringScreen) {
+        scoringScreen.addEventListener('touchstart', e => {
+          touchStartX = e.changedTouches[0].screenX;
+        });
+
+        scoringScreen.addEventListener('touchend', e => {
+          touchEndX = e.changedTouches[0].screenX;
+          handleSwipe();
+        });
+      }
+
+      // Setup pull-to-refresh for results tab
+      const resultsTab = document.getElementById('results-tab');
+      if (resultsTab) {
+        resultsTab.addEventListener('touchstart', (e) => {
+          if (window.scrollY === 0) {
+            startY = e.touches[0].pageY;
+            isPulling = true;
+          }
+        });
+
+        resultsTab.addEventListener('touchmove', (e) => {
+          if (!isPulling) return;
+
+          const currentY = e.touches[0].pageY;
+          const pullDistance = currentY - startY;
+
+          if (pullDistance > 80) {
+            // Show refresh indicator
+            showRefreshIndicator();
+          }
+        });
+
+        resultsTab.addEventListener('touchend', () => {
+          if (isPulling) {
+            loadResults();
+            hideRefreshIndicator();
+            vibrate(15);
+          }
+          isPulling = false;
+        });
+      }
+
+      // Setup auto-expanding textarea for comments
+      const commentsTextarea = document.getElementById('comments');
+      if (commentsTextarea) {
+        commentsTextarea.addEventListener('input', function () {
+          this.style.height = 'auto';
+          this.style.height = (this.scrollHeight) + 'px';
+          validateComments();
+        });
+      }
     });
   </script>
   <script>
