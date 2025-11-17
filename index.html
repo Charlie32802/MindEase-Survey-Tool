@@ -66,13 +66,17 @@
       box-sizing: border-box;
     }
 
+    html {
+      background: #FAFBFC;
+    }
+
     body {
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       min-height: 100vh;
       overflow-x: hidden;
       background: #FAFBFC;
-      padding-top: env(safe-area-inset-top);
+      padding-top: 0;
       padding-bottom: env(safe-area-inset-bottom);
       padding-left: env(safe-area-inset-left);
       padding-right: env(safe-area-inset-right);
@@ -245,7 +249,7 @@
       z-index: 9999;
       pointer-events: none;
       padding: 2rem;
-      padding-top: calc(2rem + env(safe-area-inset-top));
+      padding-top: 2rem;
       padding-bottom: calc(2rem + env(safe-area-inset-bottom));
     }
 
@@ -419,22 +423,30 @@
     }
 
     .refresh-indicator {
-      position: absolute;
+      position: fixed;
       top: 0;
-      left: 0;
-      right: 0;
-      height: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      max-width: 448px;
+      width: 100%;
+      height: 50px;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), transparent);
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 0 0 12px 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       opacity: 0;
-      transition: opacity 0.3s;
+      transition: opacity 0.3s, transform 0.3s;
       pointer-events: none;
+      z-index: 1000;
+      backdrop-filter: blur(10px);
     }
 
     .refresh-indicator.visible {
       opacity: 1;
+      transform: translateX(-50%) translateY(0);
     }
 
     .skeleton {
@@ -2338,7 +2350,7 @@
       const resultsTab = document.getElementById('results-tab');
       if (resultsTab) {
         resultsTab.addEventListener('touchstart', (e) => {
-          if (window.scrollY === 0) {
+          if (resultsTab.scrollTop === 0) {
             startY = e.touches[0].pageY;
             isPulling = true;
           }
@@ -2350,8 +2362,7 @@
           const currentY = e.touches[0].pageY;
           const pullDistance = currentY - startY;
 
-          if (pullDistance > 80) {
-            // Show refresh indicator
+          if (pullDistance > 100 && resultsTab.scrollTop === 0) {
             showRefreshIndicator();
           }
         });
