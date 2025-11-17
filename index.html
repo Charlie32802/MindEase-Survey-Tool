@@ -239,9 +239,7 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: linear-gradient(135deg, #667eea 0%, #4169E1 50%, #764ba2 100%);
-      background-size: 200% 200%;
-      animation: gradientShift 8s ease infinite;
+      background: #4169E1;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -1642,25 +1640,20 @@
       container.innerHTML = showLoadingSkeleton();
 
       try {
-        // Try to get data from Firebase first
         const snapshot = await db.collection('survey_responses').get();
         const firebaseResponses = [];
         snapshot.forEach(doc => {
           const data = doc.data();
-          // Add Firebase document ID to prevent duplicates
           data.firebaseId = doc.id;
           firebaseResponses.push(data);
         });
 
-        // Also get local data
         const stored = localStorage.getItem('mindease-responses');
         const localResponses = stored ? JSON.parse(stored) : [];
 
-        // Create a Set to track unique responses using timestamp + email as key
         const uniqueKeys = new Set();
         const mergedResponses = [];
 
-        // First add Firebase responses (prioritize these)
         firebaseResponses.forEach(response => {
           const key = response.timestamp + (response.personalInfo?.email || '');
           if (!uniqueKeys.has(key)) {
@@ -1669,7 +1662,6 @@
           }
         });
 
-        // Then add local responses only if they don't exist in Firebase
         localResponses.forEach(response => {
           const key = response.timestamp + (response.personalInfo?.email || '');
           if (!uniqueKeys.has(key)) {
@@ -1679,17 +1671,17 @@
         });
 
         allResponses = mergedResponses;
-
-        // Update localStorage with merged data (remove duplicates)
         localStorage.setItem('mindease-responses', JSON.stringify(allResponses));
 
         updateResultsView();
       } catch (error) {
         console.error('Error loading from Firebase:', error);
-        // Fall back to local storage
         const stored = localStorage.getItem('mindease-responses');
         allResponses = stored ? JSON.parse(stored) : [];
         updateResultsView();
+      } finally {
+        // Always hide refresh indicator after loading completes
+        setTimeout(() => hideRefreshIndicator(), 500);
       }
     }
 
@@ -2266,34 +2258,28 @@
       const splashShown = sessionStorage.getItem('splashShown');
 
       if (!splashShown) {
-        // Set body and html background to match splash during entrance
-        document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #4169E1 50%, #764ba2 100%)';
-        document.documentElement.style.background = '#667eea';
+        // Set body and html background to match splash (solid primary color)
+        document.body.style.background = '#4169E1';
+        document.documentElement.style.background = '#4169E1';
 
-        // Show splash screen on first load
         splashScreen.style.display = 'flex';
 
-        // Hide after 6 seconds
         setTimeout(() => {
-          // Start transitioning body background to white BEFORE fade-out begins
           document.body.style.transition = 'background 0.8s ease';
           document.documentElement.style.transition = 'background 0.8s ease';
           document.body.style.background = '#FAFBFC';
           document.documentElement.style.background = '#FAFBFC';
 
-          // Start splash fade-out at the same time
           splashScreen.classList.add('splash-fade-out');
 
           setTimeout(() => {
             splashScreen.style.display = 'none';
-            // Remove transition after animation completes
             document.body.style.transition = '';
             document.documentElement.style.transition = '';
             sessionStorage.setItem('splashShown', 'true');
           }, 800);
         }, 6000);
       } else {
-        // Already shown, hide immediately and ensure white background
         splashScreen.style.display = 'none';
         document.body.style.background = '#FAFBFC';
         document.documentElement.style.background = '#FAFBFC';
@@ -2349,6 +2335,7 @@
       }
 
       // Setup pull-to-refresh for results tab
+      // Setup pull-to-refresh for results tab
       const resultsTab = document.getElementById('results-tab');
       if (resultsTab) {
         resultsTab.addEventListener('touchstart', (e) => {
@@ -2369,11 +2356,10 @@
           }
         });
 
-        resultsTab.addEventListener('touchend', () => {
+        resultsTab.addEventListener('touchend', async () => {
           if (isPulling) {
-            loadResults();
-            hideRefreshIndicator();
             vibrate(15);
+            await loadResults(); // Wait for loading to complete
           }
           isPulling = false;
         });
